@@ -1,0 +1,123 @@
+<div class="create-job-page">
+  <section class="page-hero">
+    <div>
+      <p class="page-eyebrow">Recruiter workspace</p>
+      <h1>Create Job</h1>
+      <p class="page-subtitle">
+        Add a new role to your hiring pipeline and make it available to candidates.
+      </p>
+    </div>
+
+    <a routerLink="/recruiter/jobs" class="ghost-action">Back to Jobs</a>
+  </section>
+
+  <section class="form-panel">
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <form #jobForm="ngForm" (ngSubmit)="onSubmit(jobForm)" novalidate>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Job Title</label>
+          <input
+            [(ngModel)]="job.title"
+            name="title"
+            required
+            placeholder="Enter job title"
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label>Description</label>
+          <textarea
+            [(ngModel)]="job.description"
+            name="description"
+            required
+            placeholder="Enter role description"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Company Name</label>
+          <input
+            [(ngModel)]="job.companyName"
+            name="companyName"
+            required
+            placeholder="Enter company name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input
+            [(ngModel)]="job.location"
+            name="location"
+            required
+            placeholder="Enter job location"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Job Type</label>
+          <select [(ngModel)]="job.jobType" name="jobType" required>
+            <option *ngFor="let type of jobTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Experience Level</label>
+          <select [(ngModel)]="job.experienceLevel" name="experienceLevel" required>
+            <option *ngFor="let level of experienceLevels" [value]="level">{{ level }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Minimum Salary</label>
+          <input
+            type="number"
+            [(ngModel)]="job.salaryMin"
+            name="salaryMin"
+            required
+            min="0"
+            placeholder="Enter minimum salary"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Maximum Salary</label>
+          <input
+            type="number"
+            [(ngModel)]="job.salaryMax"
+            name="salaryMax"
+            required
+            min="0"
+            placeholder="Enter maximum salary"
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label>Skills Required</label>
+          <input
+            [(ngModel)]="job.skillsRequired"
+            name="skillsRequired"
+            required
+            placeholder="Example: Java, Spring Boot, MySQL"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="job.status" name="status" required>
+            <option *ngFor="let status of jobStatuses" [value]="status">{{ status }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/recruiter/jobs" class="secondary-btn">Cancel</a>
+        <button type="submit" class="primary-btn" [disabled]="isLoading">
+          {{ isLoading ? 'Creating...' : 'Create Job' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

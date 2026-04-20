@@ -1,0 +1,731 @@
+/* ═══════════════════════════════════════════════
+   HireConnect — Profile Page
+════════════════════════════════════════════════ */
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1000px;
+}
+
+/* ── Page Header ─────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.page-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.page-header h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  letter-spacing: -0.4px;
+}
+
+.page-subtitle {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Primary Button ──────────────────────────── */
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 20px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(39, 93, 245, 0.28);
+}
+
+.primary-btn:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 4px 16px rgba(39, 93, 245, 0.36);
+  transform: translateY(-1px);
+}
+
+/* ── Loading State ───────────────────────────── */
+.loading-state {
+  text-align: center;
+  padding: 60px 32px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Profile Hero Card ───────────────────────── */
+.profile-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #0f1f6b 0%, var(--primary) 70%, #4f46e5 100%);
+  border-radius: var(--radius-xl);
+  color: white;
+  flex-wrap: wrap;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 3px solid rgba(255,255,255,0.35);
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.profile-hero-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-hero-content h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+
+.profile-hero-headline {
+  font-size: 13.5px;
+  color: rgba(255,255,255,0.82);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.profile-meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.profile-meta span {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.72);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.profile-meta span::before {
+  content: '• ';
+  color: rgba(255,255,255,0.5);
+}
+
+.profile-meta span:first-child::before {
+  content: '';
+}
+
+/* ── Profile Grid ────────────────────────────── */
+.profile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Profile Card ────────────────────────────── */
+.profile-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.2s;
+}
+
+.profile-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Profile Row (view mode) ─────────────────── */
+.profile-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 8px 16px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--bg-app);
+  align-items: start;
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-row label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 1px;
+}
+
+.profile-row p {
+  font-size: 13.5px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* ── Form Groups (edit mode) ─────────────────── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--primary);
+  background: white;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.65;
+}
+
+/* ── Form Actions ────────────────────────────── */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 0 0;
+}
+
+.form-actions.full-width {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 26px;
+  box-shadow: var(--shadow-xs);
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: white;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.secondary-btn:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 700px) {
+  .profile-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px;
+  }
+
+  .profile-row {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .page-header {
+    flex-direction: column;
+  }
+
+  .primary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Resume — View Mode
+════════════════════════════════════════════════ */
+
+.resume-view-block {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-app);
+  padding: 14px 16px;
+}
+
+.resume-file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.resume-file-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--info-border);
+}
+
+.resume-file-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resume-file-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resume-file-size {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.btn-download-resume {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(39, 93, 245, 0.25);
+}
+
+.btn-download-resume:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-download-resume:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* No resume state */
+.resume-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 20px;
+  text-align: center;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-app);
+}
+
+.resume-empty p {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.resume-empty span {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════
+   Resume — Upload (Edit Mode)
+════════════════════════════════════════════════ */
+
+/* Current resume indicator */
+.resume-current-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  color: var(--success);
+}
+
+.resume-current-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--success);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resume-current-label {
+  font-size: 11.5px;
+  color: var(--success);
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* Upload drop zone */
+.resume-upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 20px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-app);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: center;
+  margin-bottom: 14px;
+  color: var(--text-muted);
+}
+
+.resume-upload-zone:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.resume-upload-zone.has-file {
+  border-color: var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.upload-zone-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: color 0.15s;
+}
+
+.upload-zone-title.selected {
+  color: var(--success);
+}
+
+.resume-upload-zone:hover .upload-zone-title {
+  color: var(--primary);
+}
+
+.upload-zone-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Upload button */
+.btn-upload-resume {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 22px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(39, 93, 245, 0.28);
+}
+
+.btn-upload-resume:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-upload-resume:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Validation messages */
+.resume-error {
+  font-size: 13px;
+  color: var(--error);
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius-md);
+  padding: 9px 14px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.resume-success {
+  font-size: 13px;
+  color: var(--success);
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-md);
+  padding: 9px 14px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════
+   Candidate List Sections (Skills / Edu / Exp / Links)
+════════════════════════════════════════════════ */
+
+/* Section header with title + add button */
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header-row h3 {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.btn-add-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.btn-add-item:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Card wrapping each list entry */
+.list-item-card {
+  position: relative;
+  background: var(--bg-app);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 18px 14px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.list-item-card:last-of-type {
+  margin-bottom: 0;
+}
+
+.list-item-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 10px rgba(39, 93, 245, 0.08);
+}
+
+/* Remove (×) button — top-right of card */
+.btn-remove-item {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--error-bg);
+  color: var(--error);
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-remove-item:hover {
+  background: var(--error);
+  color: white;
+}
+
+/* 2-column grid for form fields inside a list card */
+.list-item-fields.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+.list-item-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+/* Inline checkbox group */
+.form-group-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.form-group-inline input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.form-group-inline label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+/* Empty state hint */
+.empty-list-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 18px 0 6px;
+  font-style: italic;
+}
+
+/* Sub-text in view mode rows */
+.profile-row-sub {
+  grid-column: 2;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 1px;
+}
+
+/* Social link anchors */
+.profile-row a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.profile-row a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments for list item grid */
+@media (max-width: 600px) {
+  .list-item-fields,
+  .list-item-fields.two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

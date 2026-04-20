@@ -1,59 +1,100 @@
-# HireconnectFrontend
+<!-- [Disha Gujar]: Added READ.md file -->
+# HireConnect — Frontend Platform
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.4.
+HireConnect is a state-of-the-art recruitment platform designed to bridge the gap between talented candidates and top-tier recruiters. This repository contains the professional, high-performance Angular frontend for the HireConnect ecosystem.
 
-## Development server
+## 🚀 Overview
 
-To start a local development server, run:
+The frontend is meticulously crafted with a focus on user experience, inspired by industry leaders like Naukri.com. It provides dedicated dashboards and workflows for both recruiters and candidates, ensuring a streamlined hiring process from job posting to interview scheduling.
 
-```bash
-ng serve
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    User((User)) --> Gateway[API Gateway :8080]
+    
+    subgraph "Frontend Layer (Angular)"
+        App[App Root]
+        Auth[Auth Module]
+        Recruiter[Recruiter Dashboard]
+        Candidate[Candidate Dashboard]
+        Profile[Profile Management]
+        Shared[Shared Components]
+    end
+
+    App --> Auth
+    App --> Recruiter
+    App --> Candidate
+    App --> Profile
+    Shared -.-> Recruiter
+    Shared -.-> Candidate
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🛠️ Technology Stack
 
-## Code scaffolding
+- **Core Framework**: Angular 17+ (Standalone Components)
+- **State Management**: RxJS (Observables & Subjects)
+- **Styling**: Vanilla CSS3 (Custom Design System with Variables)
+- **Networking**: HttpClient with JWT Interceptors
+- **Integrations**: Razorpay Payment Gateway, Google OAuth2
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## ✨ Key Features
 
-```bash
-ng generate component component-name
+### For Recruiters
+- **Job Lifecycle Management**: Create, update, and manage job postings with ease.
+- **Application Tracking**: Review candidate applications and download resumes securely.
+- **Interview Scheduling**: Intuitive interface for scheduling interviews across different modes.
+- **Featured Jobs**: Boost job visibility through integrated payment processing.
+
+### For Candidates
+- **Smart Job Search**: Advanced filtering by location, salary, job type, and skills.
+- **One-Click Application**: Streamlined application process for tracked jobs.
+- **Professional Profile**: Comprehensive profile builder including resume management.
+- **Real-time Notifications**: Stay updated on application status and interview alerts.
+
+## 🚦 Getting Started
+
+### Prerequisites
+- Node.js (v18+)
+- npm (v9+)
+
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Dishagujar26/HireConnect-Frontend.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm start
+   ```
+
+### Configuration
+The application communicates with the backend via the API Gateway. Ensure the gateway URL is correctly configured in `src/environments/environment.ts`.
+
+## 📈 User Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Candidate
+    participant G as API Gateway
+    participant S as Microservices
+    
+    C->>G: Search Jobs
+    G-->>C: Returns Open Jobs
+    C->>G: Apply to Job
+    G->>S: Create Application
+    S-->>G: Application Success
+    G-->>C: Toast: Applied Successfully
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🤝 Contribution
 
-```bash
-ng generate --help
-```
+This project is developed and maintained by **Disha Gujar**.
 
-## Building
+---
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+© 2024 HireConnect. All rights reserved.

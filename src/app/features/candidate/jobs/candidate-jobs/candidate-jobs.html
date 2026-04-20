@@ -1,0 +1,143 @@
+<div class="jobs-page">
+
+  <!-- ── Page Header ───────────────────────────────── -->
+  <section class="page-header">
+    <div>
+      <h1>Browse Jobs</h1>
+      <p class="page-subtitle">Explore open opportunities and find roles that match your skills and goals.</p>
+    </div>
+  </section>
+
+  <!-- ── Search + Filters ──────────────────────────── -->
+  <section class="search-filter-bar">
+    <div class="search-box">
+      <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+        placeholder="Search by title, company, location, skills..."
+      />
+      <button *ngIf="searchTerm" class="clear-btn" type="button" (click)="clearSearch()">✕</button>
+    </div>
+
+    <div class="filter-chips">
+      <button type="button" class="chip" [class.chip-active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">
+        All Jobs
+      </button>
+      <button type="button" class="chip" [class.chip-active]="activeFilter === 'NOT_APPLIED'" (click)="setFilter('NOT_APPLIED')">
+        Not Applied
+      </button>
+      <button type="button" class="chip" [class.chip-active]="activeFilter === 'APPLIED'" (click)="setFilter('APPLIED')">
+        Applied
+      </button>
+    </div>
+  </section>
+
+  <!-- ── Results Count ─────────────────────────────── -->
+  <div class="results-info" *ngIf="!isLoading && filteredJobs.length > 0">
+    <strong>{{ filteredJobs.length }}</strong> job{{ filteredJobs.length !== 1 ? 's' : '' }} found
+  </div>
+
+  <!-- ── Loading ───────────────────────────────────── -->
+  <div class="state-card" *ngIf="isLoading">
+    <div class="state-spinner"></div>
+    <p>Loading jobs...</p>
+  </div>
+
+  <!-- ── Error ─────────────────────────────────────── -->
+  <div class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <!-- ── Empty ─────────────────────────────────────── -->
+  <div class="state-card" *ngIf="!isLoading && filteredJobs.length === 0">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round">
+      <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+    </svg>
+    <h3>No jobs found</h3>
+    <p>Try a different search term or adjust the filter.</p>
+  </div>
+
+  <!-- ── Job List ───────────────────────────────────── -->
+  <div class="job-list" *ngIf="!isLoading && filteredJobs.length > 0">
+    <article
+      class="job-card"
+      *ngFor="let job of filteredJobs"
+      [class.featured-card]="job.isFeatured"
+    >
+      <!-- Featured ribbon -->
+      <div class="featured-ribbon" *ngIf="job.isFeatured">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Featured
+      </div>
+
+      <!-- Left: Company Logo Placeholder -->
+      <div class="job-company-logo">
+        {{ job.companyName?.charAt(0)?.toUpperCase() || 'C' }}
+      </div>
+
+      <!-- Center: Job Details -->
+      <div class="job-info">
+        <div class="job-title-row">
+          <h3>{{ job.title }}</h3>
+        </div>
+        <p class="job-company">{{ job.companyName }}</p>
+
+        <div class="job-meta-row">
+          <span class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ job.location }}
+          </span>
+          <span class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+            {{ job.jobType }}
+          </span>
+          <span class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            {{ job.experienceLevel }}
+          </span>
+        </div>
+
+        <p class="job-description">{{ job.description }}</p>
+
+        <div class="skills-row" *ngIf="job.skillsRequired">
+          <span class="skill-chip" *ngFor="let skill of job.skillsRequired.split(',').slice(0,4)">
+            {{ skill.trim() }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: Salary + Actions -->
+      <div class="job-right">
+        <div class="job-salary">{{ formatSalary(job) }}</div>
+
+        <div class="job-status-row">
+          <span class="status-badge" [class.status-applied]="isApplied(job.jobId)">
+            {{ isApplied(job.jobId) ? 'Applied ✓' : job.status }}
+          </span>
+        </div>
+
+        <div class="job-actions">
+          <a [routerLink]="['/jobs', job.jobId]" class="btn-view">View Details</a>
+          <button
+            class="btn-apply"
+            type="button"
+            (click)="applyToJob(job.jobId)"
+            [disabled]="isApplied(job.jobId) || isApplying(job.jobId)"
+          >
+            {{ isApplying(job.jobId) ? 'Applying...' : isApplied(job.jobId) ? 'Applied' : 'Apply Now' }}
+          </button>
+        </div>
+      </div>
+
+    </article>
+  </div>
+
+</div>

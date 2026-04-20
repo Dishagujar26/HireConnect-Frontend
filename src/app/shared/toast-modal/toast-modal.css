@@ -1,0 +1,55 @@
+.toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.toast {
+  min-width: 260px;
+  max-width: 360px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: sans-serif;
+  font-weight: 500;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+
+  animation: slideDown 0.3s ease;
+}
+
+/* [Disha Gujar] : Toast Type Variations */
+
+.toast.success {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.toast.error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.toast.info {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+/* [Disha Gujar] : Animation Definitions */
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

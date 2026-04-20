@@ -1,0 +1,149 @@
+<div class="job-details-page" *ngIf="!isLoading && job; else loadingBlock">
+
+  <!-- ── Breadcrumb / Back ──────────────────────────── -->
+  <div class="breadcrumb">
+    <a routerLink="/jobs" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to Jobs
+    </a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="breadcrumb-current">{{ job.title }}</span>
+  </div>
+
+  <!-- ── Two-Column Layout ──────────────────────────── -->
+  <div class="details-layout">
+
+    <!-- LEFT: Main Content -->
+    <div class="details-main">
+
+      <!-- Job Header Card -->
+      <div class="jd-header-card">
+        <div class="jd-company-logo">
+          {{ job.companyName?.charAt(0)?.toUpperCase() || 'C' }}
+        </div>
+        <div class="jd-header-info">
+          <h1>{{ job.title }}</h1>
+          <p class="jd-company">{{ job.companyName }}</p>
+
+          <div class="jd-meta-row">
+            <span class="meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+              {{ job.location }}
+            </span>
+            <span class="meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              </svg>
+              {{ job.jobType }}
+            </span>
+            <span class="meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              {{ job.experienceLevel }}
+            </span>
+          </div>
+
+          <div class="jd-badges">
+            <span class="status-badge" [class.applied-badge]="alreadyApplied">
+              {{ alreadyApplied ? '✓ Applied' : job.status }}
+            </span>
+            <span class="featured-badge" *ngIf="job.isFeatured">⭐ Featured</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Job Description -->
+      <div class="jd-section-card">
+        <div class="jd-section-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Job Description
+        </div>
+        <p class="jd-body-text">{{ job.description }}</p>
+      </div>
+
+      <!-- Skills Required -->
+      <div class="jd-section-card">
+        <div class="jd-section-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Skills Required
+        </div>
+        <div class="skills-chips" *ngIf="job.skillsRequired; else noSkills">
+          <span class="skill-chip" *ngFor="let skill of job.skillsRequired.split(',')">
+            {{ skill.trim() }}
+          </span>
+        </div>
+        <ng-template #noSkills>
+          <p class="no-data">Skills not specified for this role.</p>
+        </ng-template>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Sticky Sidebar -->
+    <aside class="details-sidebar">
+
+      <!-- Apply Card -->
+      <div class="sidebar-apply-card">
+        <div class="salary-display">{{ formatSalary() }}</div>
+        <p class="salary-label">Annual Package</p>
+
+        <button
+          class="btn-apply-full"
+          type="button"
+          (click)="applyToJob()"
+          [disabled]="alreadyApplied || isApplying"
+        >
+          <svg *ngIf="!alreadyApplied && !isApplying" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+          </svg>
+          {{ isApplying ? 'Applying...' : alreadyApplied ? '✓ Already Applied' : 'Apply Now' }}
+        </button>
+
+        <a routerLink="/jobs" class="btn-back-link">← Back to all jobs</a>
+      </div>
+
+      <!-- Job Info Summary -->
+      <div class="sidebar-info-card">
+        <h4>Job Overview</h4>
+        <div class="overview-row">
+          <span class="overview-label">Company</span>
+          <span class="overview-value">{{ job.companyName }}</span>
+        </div>
+        <div class="overview-row">
+          <span class="overview-label">Location</span>
+          <span class="overview-value">{{ job.location }}</span>
+        </div>
+        <div class="overview-row">
+          <span class="overview-label">Type</span>
+          <span class="overview-value">{{ job.jobType }}</span>
+        </div>
+        <div class="overview-row">
+          <span class="overview-label">Experience</span>
+          <span class="overview-value">{{ job.experienceLevel }}</span>
+        </div>
+        <div class="overview-row">
+          <span class="overview-label">Status</span>
+          <span class="overview-value">{{ job.status }}</span>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+</div>
+
+<ng-template #loadingBlock>
+  <div class="loading-shell">
+    <div class="loading-spinner"></div>
+    <p>Loading job details...</p>
+  </div>
+</ng-template>

@@ -1,0 +1,86 @@
+<div class="schedule-page">
+  <section class="page-header">
+    <div>
+      <p class="page-label">Recruiter workspace</p>
+      <h1>Schedule Interview</h1>
+      <p class="page-subtitle">
+        Set up an interview for shortlisted candidate application #{{ applicationId }}.
+      </p>
+    </div>
+
+    <a routerLink="/recruiter/interviews" class="secondary-btn">Back to Interviews</a>
+  </section>
+
+  <section class="form-card">
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <form #interviewForm="ngForm" (ngSubmit)="onSubmit(interviewForm)" novalidate>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Interview Title</label>
+          <input
+            [(ngModel)]="formData.title"
+            name="title"
+            required
+            placeholder="Example: Technical Interview Round 1"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Interview Type</label>
+          <select [(ngModel)]="formData.interviewType" name="interviewType" required>
+            <option *ngFor="let type of interviewTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Date and Time</label>
+          <input
+            type="datetime-local"
+            [(ngModel)]="formData.scheduledAt"
+            name="scheduledAt"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Duration (minutes)</label>
+          <input
+            type="number"
+            [(ngModel)]="formData.durationMinutes"
+            name="durationMinutes"
+            min="1"
+            required
+            placeholder="30"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Mode Details</label>
+          <input
+            [(ngModel)]="formData.modeDetails"
+            name="modeDetails"
+            required
+            placeholder="Google Meet link / office address / phone instructions"
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label>Notes</label>
+          <textarea
+            [(ngModel)]="formData.notes"
+            name="notes"
+            placeholder="Add interview instructions or comments"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/recruiter/interviews" class="secondary-btn">Cancel</a>
+        <button type="submit" class="primary-btn" [disabled]="isLoading">
+          {{ isLoading ? 'Scheduling...' : 'Schedule Interview' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

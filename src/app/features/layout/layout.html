@@ -1,0 +1,224 @@
+<div class="app-shell">
+
+  <!-- ══ SIDEBAR ══════════════════════════════════ -->
+  <aside class="sidebar">
+
+    <!-- Brand -->
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">HireConnect</span>
+        <span class="brand-tagline">Job Portal</span>
+      </div>
+    </div>
+
+    <!-- Role Chip -->
+    <div class="role-chip-wrap">
+      <span class="role-chip">{{ userRole === 'RECRUITER' ? '🧑‍💼 Recruiter' : '👤 Candidate' }}</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+
+      <!-- CANDIDATE nav -->
+      <ng-container *ngIf="userRole === 'CANDIDATE'">
+        <a routerLink="/candidate/dashboard" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a routerLink="/jobs" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          </svg>
+          <span>Browse Jobs</span>
+        </a>
+        <a routerLink="/candidate/applications" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span>My Applications</span>
+        </a>
+        <a routerLink="/candidate/interviews" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span>Interviews</span>
+        </a>
+        <a routerLink="/profile" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Profile</span>
+        </a>
+
+      </ng-container>
+
+      <!-- RECRUITER nav -->
+      <ng-container *ngIf="userRole === 'RECRUITER'">
+        <a routerLink="/recruiter/dashboard" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a routerLink="/recruiter/jobs" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          </svg>
+          <span>Manage Jobs</span>
+        </a>
+        <a routerLink="/recruiter/applications" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Applications</span>
+        </a>
+        <a routerLink="/recruiter/interviews" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span>Interviews</span>
+        </a>
+        <a routerLink="/profile" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Profile</span>
+        </a>
+
+        <a routerLink="/recruiter/billing" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+          <span>Billing</span>
+        </a>
+      </ng-container>
+    </nav>
+
+    <!-- Bottom CTA -->
+    <div class="sidebar-cta">
+      <a *ngIf="userRole === 'RECRUITER'" routerLink="/recruiter/jobs/create" class="sidebar-cta-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Post a Job
+      </a>
+      <a *ngIf="userRole === 'CANDIDATE'" routerLink="/jobs" class="sidebar-cta-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Find Jobs
+      </a>
+    </div>
+
+    <!-- Logout -->
+    <div class="sidebar-logout">
+      <button class="logout-btn" type="button" (click)="logout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN SHELL ════════════════════════════════ -->
+  <div class="main-shell">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="search-wrap">
+          <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" placeholder="Search jobs, applications, candidates..." />
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button class="topbar-icon-btn notification-btn" type="button" (click)="toggleNotifications()" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="topbar-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+        </button>
+
+        <a routerLink="/profile" class="topbar-profile">
+          <span class="topbar-avatar">{{ userInitial }}</span>
+          <span class="topbar-user-info">
+            <strong>{{ userRole === 'RECRUITER' ? 'Recruiter Account' : 'Candidate Account' }}</strong>
+            <small>{{ userEmail }}</small>
+          </span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Notification Panel Backdrop -->
+    <div class="notif-backdrop" *ngIf="isNotificationPanelOpen" (click)="closeNotifications()"></div>
+
+    <!-- Notification Dropdown Panel -->
+    <aside class="notif-panel" *ngIf="isNotificationPanelOpen">
+      <div class="notif-panel-header">
+        <div>
+          <h3>Notifications</h3>
+          <p>Your recent activity updates</p>
+        </div>
+        <button type="button" class="notif-close-btn" (click)="closeNotifications()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="notif-list" *ngIf="notifications.length > 0; else noNotif">
+        <div
+          class="notif-item"
+          *ngFor="let notification of notifications"
+          [class.unread]="!notification.isRead"
+          (click)="markAsRead(notification)"
+        >
+          <div class="notif-dot"></div>
+          <div class="notif-content">
+            <p class="notif-title">{{ notification.title }}</p>
+            <p class="notif-message">{{ notification.message }}</p>
+            <span class="notif-time">{{ notification.createdAt | date:'short' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noNotif>
+        <div class="notif-empty">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <p>No notifications yet</p>
+        </div>
+      </ng-template>
+
+      <div class="notif-footer">
+        <a routerLink="/notifications" (click)="closeNotifications()">View all notifications →</a>
+      </div>
+    </aside>
+
+    <!-- Page Content -->
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

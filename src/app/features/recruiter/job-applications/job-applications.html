@@ -1,0 +1,125 @@
+<div class="applications-page">
+  <section class="page-header">
+    <div>
+      <p class="page-label">Recruiter workspace</p>
+      <h1>Applications</h1>
+      <p class="page-subtitle">
+        Review applicants for this job and manage their progress in your hiring pipeline.
+      </p>
+    </div>
+
+    <a routerLink="/recruiter/jobs" class="back-btn">Back to Jobs</a>
+  </section>
+
+  <section class="summary-row">
+    <div class="summary-card">
+      <span>Total Applications</span>
+      <strong>{{ applications.length }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Shortlisted</span>
+      <strong>{{ shortlistedCount }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Rejected</span>
+      <strong>{{ rejectedCount }}</strong>
+    </div>
+  </section>
+
+  <div class="loading-state" *ngIf="isLoading">Loading applications...</div>
+
+  <div class="empty-state" *ngIf="!isLoading && applications.length === 0">
+    <h3>No applications yet</h3>
+    <p>Candidates will appear here once they apply for this job.</p>
+  </div>
+
+  <div class="applications-list" *ngIf="!isLoading && applications.length > 0">
+    <article class="application-card" *ngFor="let app of applications">
+
+      <div class="candidate-left">
+        <ng-container *ngIf="app.candidateProfile as profile; else fallbackAvatar">
+          <div class="avatar">
+            {{ profile.firstName.charAt(0) }}{{ profile.lastName ? profile.lastName.charAt(0) : '' }}
+          </div>
+        </ng-container>
+        <ng-template #fallbackAvatar>
+          <div class="avatar">{{ app.candidateId }}</div>
+        </ng-template>
+
+        <div class="candidate-info">
+          <ng-container *ngIf="app.candidateProfile as profile; else fallbackName">
+            <h3>{{ profile.firstName }} {{ profile.lastName || '' }}</h3>
+            <p class="headline" *ngIf="profile.headline">{{ profile.headline }}</p>
+            <div class="meta-row">
+              <span *ngIf="profile.location">{{ profile.location }}</span>
+              <span>Applied {{ app.appliedAt | date:'mediumDate' }}</span>
+              <button
+                type="button"
+                class="resume-link"
+                [disabled]="downloadingResumeFor === app.candidateId"
+                (click)="downloadResume(app.candidateId)"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                {{ downloadingResumeFor === app.candidateId ? 'Downloading...' : 'Download Resume' }}
+              </button>
+            </div>
+          </ng-container>
+
+          <ng-template #fallbackName>
+            <h3>Candidate #{{ app.candidateId }}</h3>
+            <div class="meta-row">
+              <span>Applied {{ app.appliedAt | date:'mediumDate' }}</span>
+              <button
+                type="button"
+                class="resume-link"
+                [disabled]="downloadingResumeFor === app.candidateId"
+                (click)="downloadResume(app.candidateId)"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                {{ downloadingResumeFor === app.candidateId ? 'Downloading...' : 'Download Resume' }}
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <div class="candidate-right">
+        <span
+          class="status-badge"
+          [class.applied]="app.status === 'APPLIED'"
+          [class.shortlisted]="app.status === 'SHORTLISTED'"
+          [class.rejected]="app.status === 'REJECTED'"
+          [class.accepted]="app.status === 'ACCEPTED'"
+        >
+          {{ app.status }}
+        </span>
+
+        <div class="actions" *ngIf="app.status === 'APPLIED'">
+          <button class="primary-btn" (click)="updateStatus(app, 'SHORTLISTED')">
+            Shortlist
+          </button>
+          <button class="danger-btn" (click)="updateStatus(app, 'REJECTED')">
+            Reject
+          </button>
+        </div>
+
+        <a
+          *ngIf="app.status === 'SHORTLISTED'"
+          [routerLink]="['/recruiter/interviews/schedule', app.applicationId]"
+          class="schedule-btn"
+        >
+          Schedule Interview
+        </a>
+      </div>
+
+    </article>
+  </div>
+</div>

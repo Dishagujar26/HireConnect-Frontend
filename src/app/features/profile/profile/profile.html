@@ -1,0 +1,562 @@
+<div class="profile-page">
+  <section class="page-header">
+    <div>
+      <p class="page-label">Workspace</p>
+      <h1>{{ roleTitle }}</h1>
+      <p class="page-subtitle">
+        Keep your professional details updated so your workspace stays complete and credible.
+      </p>
+    </div>
+
+    <button class="primary-btn" type="button" (click)="toggleEdit()">
+      {{ isEditMode ? 'Cancel' : 'Edit Profile' }}
+    </button>
+  </section>
+
+  <div class="loading-state" *ngIf="isLoading">
+    Loading profile...
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+    <section class="profile-hero-card">
+      <div class="profile-avatar">{{ initials }}</div>
+
+      <div class="profile-hero-content">
+        <h2>{{ fullName }}</h2>
+        <p class="profile-hero-headline">
+          {{ profile?.headline || 'Add a professional headline to strengthen your profile.' }}
+        </p>
+
+        <div class="profile-meta">
+          <span *ngIf="profile?.location">{{ profile.location }}</span>
+          <span *ngIf="profile?.phone">{{ profile.phone }}</span>
+          <span *ngIf="profile?.role">{{ profile.role }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- VIEW MODE                                                             -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <div class="profile-grid" *ngIf="!isEditMode">
+
+      <!-- COMMON -->
+      <section class="profile-card">
+        <h3>Common Information</h3>
+
+        <div class="profile-row">
+          <label>First Name</label>
+          <p>{{ profile?.firstName || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>Last Name</label>
+          <p>{{ profile?.lastName || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>Phone</label>
+          <p>{{ profile?.phone || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>Location</label>
+          <p>{{ profile?.location || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>Headline</label>
+          <p>{{ profile?.headline || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>About</label>
+          <p>{{ profile?.about || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>Profile Picture URL</label>
+          <p>{{ profile?.profilePictureUrl || 'Not added' }}</p>
+        </div>
+      </section>
+
+      <!-- RECRUITER -->
+      <section class="profile-card" *ngIf="isRecruiter">
+        <h3>Recruiter Details</h3>
+
+        <div class="profile-row">
+          <label>Company Name</label>
+          <p>{{ recruiterDetail?.companyName || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>Designation</label>
+          <p>{{ recruiterDetail?.designation || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>Website</label>
+          <p>{{ recruiterDetail?.website || 'Not added' }}</p>
+        </div>
+
+        <div class="profile-row">
+          <label>Company Description</label>
+          <p>{{ recruiterDetail?.companyDescription || 'Not added' }}</p>
+        </div>
+      </section>
+
+      <!-- CANDIDATE - Resume (View Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <h3>Resume</h3>
+
+        <div class="resume-view-block" *ngIf="hasUploadedResume; else noResume">
+          <div class="resume-file-row">
+            <div class="resume-file-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div class="resume-file-meta">
+              <span class="resume-file-name">{{ profile.resume.fileName }}</span>
+              <span class="resume-file-size" *ngIf="profile.resume.fileSize">
+                {{ formatFileSize(profile.resume.fileSize) }}
+              </span>
+            </div>
+            <button
+              class="btn-download-resume"
+              type="button"
+              (click)="downloadMyResume()"
+              [disabled]="isDownloadingResume"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              {{ isDownloadingResume ? 'Downloading...' : 'Download' }}
+            </button>
+          </div>
+        </div>
+
+        <ng-template #noResume>
+          <div class="resume-empty">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <p>No resume uploaded yet.</p>
+            <span>Click <strong>Edit Profile</strong> to upload your resume.</span>
+          </div>
+        </ng-template>
+      </section>
+
+      <!-- CANDIDATE - Skills (View Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <h3>Skills</h3>
+
+        <div class="profile-row" *ngIf="profile?.skills?.length; else noSkills">
+          <p>
+            <span *ngFor="let skill of profile.skills; let last = last">
+              {{ skill.name }}<span *ngIf="skill.level"> ({{ skill.level }})</span><span *ngIf="!last">, </span>
+            </span>
+          </p>
+        </div>
+
+        <ng-template #noSkills>
+          <div class="profile-row"><p>Not added</p></div>
+        </ng-template>
+      </section>
+
+      <!-- CANDIDATE - Experience (View Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <h3>Experience</h3>
+
+        <div *ngIf="profile?.experiences?.length; else noExperience">
+          <div class="profile-row" *ngFor="let exp of profile.experiences">
+            <label>{{ exp.jobTitle }}</label>
+            <p>{{ exp.companyName }}<span *ngIf="exp.employmentType"> · {{ exp.employmentType }}</span></p>
+            <p *ngIf="exp.startDate" class="profile-row-sub">{{ exp.startDate }} – {{ exp.currentlyWorking ? 'Present' : (exp.endDate || '') }}</p>
+            <p *ngIf="exp.location" class="profile-row-sub">{{ exp.location }}</p>
+            <p *ngIf="exp.description" class="profile-row-sub">{{ exp.description }}</p>
+          </div>
+        </div>
+
+        <ng-template #noExperience>
+          <div class="profile-row"><p>Not added</p></div>
+        </ng-template>
+      </section>
+
+      <!-- CANDIDATE - Education (View Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <h3>Education</h3>
+
+        <div *ngIf="profile?.educations?.length; else noEducation">
+          <div class="profile-row" *ngFor="let edu of profile.educations">
+            <label>{{ edu.degree }}<span *ngIf="edu.fieldOfStudy"> in {{ edu.fieldOfStudy }}</span></label>
+            <p>{{ edu.institution }}</p>
+            <p *ngIf="edu.startDate" class="profile-row-sub">{{ edu.startDate }} – {{ edu.endDate || 'Present' }}</p>
+            <p *ngIf="edu.grade" class="profile-row-sub">Grade: {{ edu.grade }}</p>
+          </div>
+        </div>
+
+        <ng-template #noEducation>
+          <div class="profile-row"><p>Not added</p></div>
+        </ng-template>
+      </section>
+
+      <!-- CANDIDATE - Social Links (View Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <h3>Social Links</h3>
+
+        <div *ngIf="profile?.socialLinks?.length; else noLinks">
+          <div class="profile-row" *ngFor="let link of profile.socialLinks">
+            <label>{{ link.platform }}</label>
+            <p><a [href]="link.url" target="_blank" rel="noopener">{{ link.url }}</a></p>
+          </div>
+        </div>
+
+        <ng-template #noLinks>
+          <div class="profile-row"><p>Not added</p></div>
+        </ng-template>
+      </section>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- EDIT MODE                                                             -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <div class="profile-grid" *ngIf="isEditMode">
+
+      <!-- COMMON -->
+      <section class="profile-card">
+        <h3>Edit Common Information</h3>
+
+        <div class="form-group">
+          <label>First Name</label>
+          <input [(ngModel)]="editableProfile.firstName" />
+        </div>
+
+        <div class="form-group">
+          <label>Last Name</label>
+          <input [(ngModel)]="editableProfile.lastName" />
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input [(ngModel)]="editableProfile.phone" />
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input [(ngModel)]="editableProfile.location" />
+        </div>
+
+        <div class="form-group">
+          <label>Headline</label>
+          <input [(ngModel)]="editableProfile.headline" />
+        </div>
+
+        <div class="form-group">
+          <label>About</label>
+          <textarea [(ngModel)]="editableProfile.about"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Profile Picture URL</label>
+          <input [(ngModel)]="editableProfile.profilePictureUrl" />
+        </div>
+      </section>
+
+      <!-- RECRUITER DETAILS (Edit Mode) -->
+      <section class="profile-card" *ngIf="isRecruiter">
+        <h3>Edit Recruiter Details</h3>
+
+        <div class="form-group">
+          <label>Company Name</label>
+          <input [(ngModel)]="editableProfile.recruiterDetail.companyName" />
+        </div>
+
+        <div class="form-group">
+          <label>Designation</label>
+          <input [(ngModel)]="editableProfile.recruiterDetail.designation" />
+        </div>
+
+        <div class="form-group">
+          <label>Website</label>
+          <input [(ngModel)]="editableProfile.recruiterDetail.website" />
+        </div>
+
+        <div class="form-group">
+          <label>Company Description</label>
+          <textarea [(ngModel)]="editableProfile.recruiterDetail.companyDescription"></textarea>
+        </div>
+      </section>
+
+      <!-- CANDIDATE - Resume Upload (Edit Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <h3>Resume Upload</h3>
+
+        <!-- Current resume info -->
+        <div class="resume-current-row" *ngIf="hasUploadedResume">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <span class="resume-current-name">{{ profile.resume.fileName }}</span>
+          <span class="resume-current-label">currently uploaded</span>
+        </div>
+
+        <!-- File Picker -->
+        <label class="resume-upload-zone" [class.has-file]="selectedResumeFile">
+          <input
+            type="file"
+            accept=".pdf,application/pdf"
+            (change)="onResumeFileSelected($event)"
+            style="display:none"
+          />
+
+          <ng-container *ngIf="!selectedResumeFile">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span class="upload-zone-title">Click to select resume</span>
+            <span class="upload-zone-hint">PDF only &nbsp;·&nbsp; Max 5 MB</span>
+          </ng-container>
+
+          <ng-container *ngIf="selectedResumeFile">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span class="upload-zone-title selected">{{ selectedResumeFile.name }}</span>
+            <span class="upload-zone-hint">{{ formatFileSize(selectedResumeFile.size) }} · Click to change</span>
+          </ng-container>
+        </label>
+
+        <!-- Validation messages -->
+        <p class="resume-error" *ngIf="resumeUploadError">{{ resumeUploadError }}</p>
+        <p class="resume-success" *ngIf="resumeUploadSuccess">{{ resumeUploadSuccess }}</p>
+
+        <!-- Upload Button -->
+        <button
+          class="btn-upload-resume"
+          type="button"
+          (click)="uploadResume()"
+          [disabled]="!selectedResumeFile || isUploadingResume"
+        >
+          <svg *ngIf="!isUploadingResume" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          </svg>
+          {{ isUploadingResume ? 'Uploading...' : 'Upload Resume' }}
+        </button>
+      </section>
+
+      <!-- CANDIDATE - Skills (Edit Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <div class="section-header-row">
+          <h3>Skills</h3>
+          <button class="btn-add-item" type="button" (click)="addSkill()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Skill
+          </button>
+        </div>
+
+        <div class="list-item-card" *ngFor="let skill of editableProfile.skills; let i = index">
+          <div class="list-item-fields">
+            <div class="form-group">
+              <label>Skill Name</label>
+              <input [(ngModel)]="skill.name" placeholder="e.g. JavaScript" />
+            </div>
+            <div class="form-group">
+              <label>Level</label>
+              <select [(ngModel)]="skill.level">
+                <option value="">Select level</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+                <option value="Expert">Expert</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-remove-item" type="button" (click)="removeSkill(i)" title="Remove skill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="empty-list-hint" *ngIf="!editableProfile.skills?.length">No skills added yet. Click "Add Skill" to begin.</p>
+      </section>
+
+      <!-- CANDIDATE - Experience (Edit Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <div class="section-header-row">
+          <h3>Experience</h3>
+          <button class="btn-add-item" type="button" (click)="addExperience()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Experience
+          </button>
+        </div>
+
+        <div class="list-item-card" *ngFor="let exp of editableProfile.experiences; let i = index">
+          <button class="btn-remove-item" type="button" (click)="removeExperience(i)" title="Remove experience">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <div class="list-item-fields two-col">
+            <div class="form-group">
+              <label>Job Title</label>
+              <input [(ngModel)]="exp.jobTitle" placeholder="e.g. Software Engineer" />
+            </div>
+            <div class="form-group">
+              <label>Company Name</label>
+              <input [(ngModel)]="exp.companyName" placeholder="e.g. Google" />
+            </div>
+            <div class="form-group">
+              <label>Employment Type</label>
+              <select [(ngModel)]="exp.employmentType">
+                <option value="">Select type</option>
+                <option value="Full-Time">Full-Time</option>
+                <option value="Part-Time">Part-Time</option>
+                <option value="Contract">Contract</option>
+                <option value="Internship">Internship</option>
+                <option value="Freelance">Freelance</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input [(ngModel)]="exp.location" placeholder="e.g. Bengaluru" />
+            </div>
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" [(ngModel)]="exp.startDate" />
+            </div>
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" [(ngModel)]="exp.endDate" [disabled]="exp.currentlyWorking" />
+            </div>
+          </div>
+          <div class="form-group form-group-inline">
+            <input type="checkbox" id="currentlyWorking_{{ i }}" [(ngModel)]="exp.currentlyWorking" />
+            <label for="currentlyWorking_{{ i }}">Currently working here</label>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea [(ngModel)]="exp.description" placeholder="Brief description of your role..." rows="3"></textarea>
+          </div>
+        </div>
+
+        <p class="empty-list-hint" *ngIf="!editableProfile.experiences?.length">No experience added yet. Click "Add Experience" to begin.</p>
+      </section>
+
+      <!-- CANDIDATE - Education (Edit Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <div class="section-header-row">
+          <h3>Education</h3>
+          <button class="btn-add-item" type="button" (click)="addEducation()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Education
+          </button>
+        </div>
+
+        <div class="list-item-card" *ngFor="let edu of editableProfile.educations; let i = index">
+          <button class="btn-remove-item" type="button" (click)="removeEducation(i)" title="Remove education">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <div class="list-item-fields two-col">
+            <div class="form-group">
+              <label>Institution</label>
+              <input [(ngModel)]="edu.institution" placeholder="e.g. IIT Bombay" />
+            </div>
+            <div class="form-group">
+              <label>Degree</label>
+              <input [(ngModel)]="edu.degree" placeholder="e.g. B.Tech" />
+            </div>
+            <div class="form-group">
+              <label>Field of Study</label>
+              <input [(ngModel)]="edu.fieldOfStudy" placeholder="e.g. Computer Science" />
+            </div>
+            <div class="form-group">
+              <label>Grade / CGPA</label>
+              <input [(ngModel)]="edu.grade" placeholder="e.g. 8.5" />
+            </div>
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" [(ngModel)]="edu.startDate" />
+            </div>
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" [(ngModel)]="edu.endDate" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea [(ngModel)]="edu.description" placeholder="Activities, achievements, etc." rows="2"></textarea>
+          </div>
+        </div>
+
+        <p class="empty-list-hint" *ngIf="!editableProfile.educations?.length">No education added yet. Click "Add Education" to begin.</p>
+      </section>
+
+      <!-- CANDIDATE - Social Links (Edit Mode) -->
+      <section class="profile-card" *ngIf="isCandidate">
+        <div class="section-header-row">
+          <h3>Social Links</h3>
+          <button class="btn-add-item" type="button" (click)="addSocialLink()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Link
+          </button>
+        </div>
+
+        <div class="list-item-card" *ngFor="let link of editableProfile.socialLinks; let i = index">
+          <div class="list-item-fields">
+            <div class="form-group">
+              <label>Platform</label>
+              <select [(ngModel)]="link.platform">
+                <option value="">Select platform</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="GitHub">GitHub</option>
+                <option value="Twitter">Twitter</option>
+                <option value="Portfolio">Portfolio</option>
+                <option value="Behance">Behance</option>
+                <option value="Dribbble">Dribbble</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>URL</label>
+              <input [(ngModel)]="link.url" placeholder="https://..." />
+            </div>
+          </div>
+          <button class="btn-remove-item" type="button" (click)="removeSocialLink(i)" title="Remove link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="empty-list-hint" *ngIf="!editableProfile.socialLinks?.length">No social links added yet. Click "Add Link" to begin.</p>
+      </section>
+
+      <!-- Form Actions -->
+      <div class="form-actions full-width">
+        <button class="secondary-btn" type="button" (click)="toggleEdit()">Discard</button>
+        <button class="primary-btn" type="button" (click)="saveProfile()">Save Changes</button>
+      </div>
+    </div>
+  </ng-container>
+</div>

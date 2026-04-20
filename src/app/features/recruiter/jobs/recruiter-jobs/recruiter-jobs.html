@@ -1,0 +1,139 @@
+<div class="rjobs-page">
+
+  <!-- ── Page Header ───────────────────────────────── -->
+  <section class="page-header">
+    <div>
+      <h1>Manage Jobs</h1>
+      <p class="page-subtitle">View, update and manage all openings posted from your recruiter account.</p>
+    </div>
+    <a routerLink="/recruiter/jobs/create" class="btn-create">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Post New Job
+    </a>
+  </section>
+
+  <!-- ── Stats Strip ───────────────────────────────── -->
+  <section class="stats-strip">
+    <div class="stat-card">
+      <div class="stat-icon stat-blue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+        </svg>
+      </div>
+      <div>
+        <span class="stat-label">Total Jobs</span>
+        <strong class="stat-number">{{ jobs.length }}</strong>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-green">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div>
+        <span class="stat-label">Open</span>
+        <strong class="stat-number">{{ openJobsCount }}</strong>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-red">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <div>
+        <span class="stat-label">Closed</span>
+        <strong class="stat-number">{{ closedJobsCount }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Jobs Section ──────────────────────────────── -->
+  <section class="jobs-section">
+    <div class="section-toolbar">
+      <h2>Posted Jobs</h2>
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" placeholder="Search by title, location, type..." (input)="onSearch($event)" />
+      </div>
+    </div>
+
+    <p class="alert-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="loading-spinner"></div>
+      <p>Loading your jobs...</p>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && filteredJobs.length === 0">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round">
+        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+      </svg>
+      <h3>No jobs found</h3>
+      <p>Post your first job to start receiving applications.</p>
+      <a routerLink="/recruiter/jobs/create" class="btn-create">Post a Job</a>
+    </div>
+
+    <div class="job-list" *ngIf="!isLoading && filteredJobs.length > 0">
+      <article class="job-card" *ngFor="let job of filteredJobs">
+
+        <div class="job-card-left">
+          <div class="job-logo">{{ job.companyName?.charAt(0)?.toUpperCase() || 'C' }}</div>
+          <div class="job-info">
+            <h3>{{ job.title }}</h3>
+            <p class="job-company">{{ job.companyName }}</p>
+            <div class="job-meta">
+              <span>{{ job.location }}</span>
+              <span>{{ job.jobType }}</span>
+              <span>{{ job.experienceLevel }}</span>
+            </div>
+            <div class="skills-row" *ngIf="job.skillsRequired">
+              <span class="skill-chip" *ngFor="let s of job.skillsRequired.split(',').slice(0,3)">{{ s.trim() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="job-card-right">
+          <div class="job-meta-right">
+            <span class="status-badge" [class.status-closed]="job.status === 'CLOSED'">
+              {{ job.status }}
+            </span>
+            <span *ngIf="job.isFeatured" class="featured-badge">⭐ Featured</span>
+          </div>
+
+          <div class="salary-text">₹{{ job.salaryMin | number }} – ₹{{ job.salaryMax | number }}</div>
+
+          <div class="job-actions">
+            <button
+              type="button"
+              class="btn-promote"
+              (click)="promoteJob(job)"
+              [disabled]="processingJobId === job.jobId || job.status !== 'OPEN' || job.isFeatured"
+            >
+              {{ processingJobId === job.jobId ? 'Processing...' : job.isFeatured ? 'Promoted ✓' : '⭐ Promote' }}
+            </button>
+
+            <a [routerLink]="['/recruiter/jobs', job.jobId, 'applications']" class="btn-outline-sm">
+              View Applicants
+            </a>
+
+            <a [routerLink]="['/recruiter/jobs', job.jobId, 'edit']" class="btn-outline-sm">
+              Edit
+            </a>
+
+            <button type="button" class="btn-danger-sm" (click)="deleteJob(job.jobId)">
+              Delete
+            </button>
+          </div>
+        </div>
+
+      </article>
+    </div>
+  </section>
+
+</div>

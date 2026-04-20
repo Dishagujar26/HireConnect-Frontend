@@ -1,0 +1,27 @@
+.oauth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eff6ff, #f5f3ff, #ecfeff);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.oauth-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+  text-align: center;
+  width: 100%;
+  max-width: 420px;
+}
+
+.oauth-card h2 {
+  margin-bottom: 12px;
+  color: #1e293b;
+}
+
+.oauth-card p {
+  color: #64748b;
+}

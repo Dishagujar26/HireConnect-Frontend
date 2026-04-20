@@ -1,0 +1,26 @@
+<div class="modal-backdrop" *ngIf="modalService.isOpen">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>{{ modalService.config.title }}</h3>
+      <button type="button" class="close-btn" (click)="modalService.cancel()">✕</button>
+    </div>
+
+    <p class="modal-message">
+      {{ modalService.config.message }}
+    </p>
+
+    <div class="modal-actions">
+      <button type="button" class="cancel-btn" (click)="modalService.cancel()">
+        {{ modalService.config.cancelText }}
+      </button>
+
+      <button
+        type="button"
+        class="confirm-btn"
+        [class.danger]="modalService.config.variant === 'danger'"
+        (click)="modalService.confirm()">
+        {{ modalService.config.confirmText }}
+      </button>
+    </div>
+  </div>
+</div>

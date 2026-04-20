@@ -1,1 +1,162 @@
-/* You can add global styles to this file, and also import other style files */
+/* [Disha Gujar] : HireConnect — Global Design Tokens & Resets
+   [Disha Gujar] : Design inspired by Naukri.com professional palette */
+
+/* [Disha Gujar] : Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* [Disha Gujar] : CSS Custom Properties */
+:root {
+  /* [Disha Gujar] : Font */
+  --font: 'Inter', 'Segoe UI', Arial, sans-serif;
+
+  /* [Disha Gujar] : Brand Colors */
+  --primary:        #275df5;
+  --primary-dark:   #1a4bdb;
+  --primary-light:  #eef3ff;
+  --cta:            #ff6b35;
+  --cta-dark:       #e55a25;
+  --cta-light:      #fff3ef;
+
+  /* [Disha Gujar] : Neutral Colors */
+  --bg-app:         #f1f2f8;
+  --bg-card:        #ffffff;
+  --bg-input:       #f8f9fc;
+  --border:         #e2e8f0;
+  --border-strong:  #c8d3e8;
+
+  /* [Disha Gujar] : Text Colors */
+  --text-primary:   #1a1a2e;
+  --text-secondary: #585858;
+  --text-muted:     #8a8a99;
+  --text-on-dark:   #ffffff;
+
+  /* [Disha Gujar] : Status Colors */
+  --success:        #059669;
+  --success-bg:     #ecfdf5;
+  --success-border: #a7f3d0;
+  --warning:        #d97706;
+  --warning-bg:     #fffbeb;
+  --warning-border: #fde68a;
+  --error:          #dc2626;
+  --error-bg:       #fef2f2;
+  --error-border:   #fecaca;
+  --info:           #275df5;
+  --info-bg:        #eef3ff;
+  --info-border:    #bfcfff;
+
+  /* [Disha Gujar] : Sidebar Tokens */
+  --sidebar-width:  256px;
+  --sidebar-bg:     #ffffff;
+  --sidebar-border: #e2e8f0;
+
+  /* [Disha Gujar] : Topbar Tokens */
+  --topbar-h:       64px;
+  --topbar-bg:      #ffffff;
+
+  /* [Disha Gujar] : Radii Tokens */
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      14px;
+  --radius-xl:      18px;
+  --radius-pill:    999px;
+
+  /* [Disha Gujar] : Shadow Tokens */
+  --shadow-xs:      0 1px 3px rgba(0,0,0,0.08);
+  --shadow-sm:      0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md:      0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg:      0 8px 32px rgba(0,0,0,0.12);
+
+  /* [Disha Gujar] : Typography Tokens */
+  --text-display:       700 40px/1.1  var(--font);
+  --text-page-title:    700 28px/1.2  var(--font);
+  --text-section-label: 600 11px/1.2  var(--font);
+  --text-card-title:    700 18px/1.3  var(--font);
+  --text-nav:           500 14px/1.2  var(--font);
+  --text-body:          400 14px/1.65 var(--font);
+  --text-body-strong:   600 14px/1.6  var(--font);
+  --text-meta:          500 12px/1.3  var(--font);
+  --text-small:         400 11px/1.4  var(--font);
+}
+
+/* [Disha Gujar] : Reset Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font);
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: var(--font);
+  font-size: 14px;
+}
+
+/* [Disha Gujar] : Scrollbar Customization */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c8d3e8; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #a0b0cc; }
+
+/* [Disha Gujar] : Global Utility Classes */
+.hc-badge-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.hc-badge-success {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+}
+
+.hc-badge-error {
+  background: var(--error-bg);
+  color: var(--error);
+  border: 1px solid var(--error-border);
+}
+
+.hc-badge-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid var(--warning-border);
+}
+
+/* [Disha Gujar] : Loading Spinner Animation */
+.hc-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: hc-spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes hc-spin {
+  to { transform: rotate(360deg); }
+}

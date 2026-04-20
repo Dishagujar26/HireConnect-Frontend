@@ -1,0 +1,101 @@
+<div class="dashboard">
+
+  <!-- ── Welcome Banner ───────────────────────────── -->
+  <section class="welcome-banner">
+    <div class="welcome-text">
+      <p class="welcome-eyebrow">Candidate Workspace</p>
+      <h1>Welcome back! 👋</h1>
+      <p class="welcome-sub">Here's an overview of your job search journey and upcoming activities.</p>
+    </div>
+    <div class="welcome-actions">
+      <a routerLink="/jobs" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Browse Jobs
+      </a>
+      <a routerLink="/profile" class="btn-outline">Edit Profile</a>
+    </div>
+  </section>
+
+  <!-- ── Quick Navigation Cards ───────────────────── -->
+  <section class="quick-nav">
+    <h2 class="section-title">Quick Access</h2>
+    <div class="quick-nav-grid">
+
+      <a routerLink="/jobs" class="qnav-card">
+        <div class="qnav-icon qnav-blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          </svg>
+        </div>
+        <div class="qnav-content">
+          <h3>Browse Jobs</h3>
+          <p>Explore open opportunities matching your profile</p>
+        </div>
+        <span class="qnav-arrow">→</span>
+      </a>
+
+      <a routerLink="/candidate/applications" class="qnav-card">
+        <div class="qnav-icon qnav-orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <div class="qnav-content">
+          <h3>My Applications</h3>
+          <p>Track all your applied jobs and their status</p>
+        </div>
+        <span class="qnav-arrow">→</span>
+      </a>
+
+      <a routerLink="/candidate/interviews" class="qnav-card">
+        <div class="qnav-icon qnav-green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div class="qnav-content">
+          <h3>Interviews</h3>
+          <p>View upcoming and past interview schedules</p>
+        </div>
+        <span class="qnav-arrow">→</span>
+      </a>
+
+      <a routerLink="/profile" class="qnav-card">
+        <div class="qnav-icon qnav-purple">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="qnav-content">
+          <h3>My Profile</h3>
+          <p>Update skills, experience and resume details</p>
+        </div>
+        <span class="qnav-arrow">→</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── Tips Section ──────────────────────────────── -->
+  <section class="tips-section">
+    <div class="tip-card">
+      <span class="tip-icon">💡</span>
+      <div>
+        <h4>Complete your profile</h4>
+        <p>Profiles with complete skills and experience get 3x more recruiter views. <a routerLink="/profile">Update now →</a></p>
+      </div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-icon">🔔</span>
+      <div>
+        <h4>Stay updated</h4>
+        <p>Check notifications regularly for interview invites, application status changes and recruiter messages.</p>
+      </div>
+    </div>
+  </section>
+
+</div>

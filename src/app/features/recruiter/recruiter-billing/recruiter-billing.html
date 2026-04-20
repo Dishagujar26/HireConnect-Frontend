@@ -1,0 +1,84 @@
+<div class="billing-page">
+  <section class="page-header">
+    <div>
+      <p class="page-label">Recruiter workspace</p>
+      <h1>Billing &amp; Payments</h1>
+      <p class="page-subtitle">
+        Track your payment history for featured jobs, posting plans, and subscriptions.
+      </p>
+    </div>
+  </section>
+
+  <section class="summary-row">
+    <div class="summary-card">
+      <span class="summary-label">Total Payments</span>
+      <strong>{{ payments.length }}</strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Successful</span>
+      <strong>{{ successCount }}</strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Failed</span>
+      <strong>{{ failedCount }}</strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Pending</span>
+      <strong>{{ createdCount }}</strong>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">Total Paid</span>
+      <strong>₹{{ totalAmountPaid | number:'1.0-2' }}</strong>
+    </div>
+  </section>
+
+  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <p>Fetching your payment history...</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && !errorMessage && payments.length === 0">
+    <h3>No payments yet</h3>
+    <p>Promote a job or purchase a plan to see transactions here.</p>
+    <a routerLink="/recruiter/jobs" class="primary-btn">Promote a Job</a>
+  </div>
+
+  <div class="payments-grid" *ngIf="!isLoading && payments.length > 0">
+    <article class="payment-card" *ngFor="let payment of payments">
+      <div class="payment-card-top">
+        <div>
+          <h3>{{ formatPurpose(payment.purpose) }}</h3>
+          <p class="payment-ref">Reference #{{ payment.referenceId }}</p>
+        </div>
+
+        <div class="payment-status-group">
+          <span
+            class="status-badge"
+            [class.success]="payment.status === 'SUCCESS'"
+            [class.failed]="payment.status === 'FAILED'"
+          >
+            {{ payment.status }}
+          </span>
+          <span *ngIf="payment.status === 'CREATED'" class="pending-text">
+            Payment in progress
+          </span>
+        </div>
+      </div>
+
+      <div class="payment-meta">
+        <span>Amount: ₹{{ payment.amount | number:'1.0-2' }}</span>
+        <span>Currency: {{ payment.currency }}</span>
+      </div>
+
+      <p class="payment-description">
+        {{ payment.description || 'Payment transaction' }}
+      </p>
+
+      <div class="payment-footer">
+        <span>Order: {{ payment.providerOrderId || 'N/A' }}</span>
+        <span>{{ payment.createdAt | date:'medium' }}</span>
+      </div>
+    </article>
+  </div>
+</div>

@@ -1,0 +1,305 @@
+/* ═══════════════════════════════════════════════
+   HireConnect — Candidate Interviews Page
+════════════════════════════════════════════════ */
+
+.interviews-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1100px;
+}
+
+/* ── Page Header ─────────────────────────────── */
+.page-header { margin-bottom: 4px; }
+
+.page-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.page-header h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  letter-spacing: -0.4px;
+}
+
+.page-subtitle {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Summary Row ─────────────────────────────── */
+.summary-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 22px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  flex: 1;
+  min-width: 120px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.summary-card:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.summary-card span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.summary-card strong {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+/* ── Loading & Empty ─────────────────────────── */
+.loading-state {
+  text-align: center;
+  padding: 60px 32px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 32px;
+  text-align: center;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.empty-state h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.empty-state p {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  max-width: 340px;
+}
+
+/* ── Interviews List ─────────────────────────── */
+.interviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Interview Card ──────────────────────────── */
+.interview-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.interview-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.interview-main {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.interview-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--info-border);
+}
+
+.interview-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.title-row h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+/* ── Status Badges ───────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--bg-app);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.status-badge.scheduled {
+  background: var(--info-bg);
+  color: var(--info);
+  border-color: var(--info-border);
+}
+
+.status-badge.cancelled {
+  background: var(--error-bg);
+  color: var(--error);
+  border-color: var(--error-border);
+}
+
+/* ── Subtitle ─────────────────────────────────── */
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+/* ── Meta Row ────────────────────────────────── */
+.meta-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-app);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ── Mode / Notes ────────────────────────────── */
+.mode-details {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.notes {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: 10px 14px;
+  background: var(--bg-app);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+/* ── Interview Link / Location ───────────────── */
+.interview-link-row,
+.interview-location-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-light, #eef2ff);
+  border: 1px solid var(--info-border, #c7d2fe);
+}
+
+.link-icon {
+  flex-shrink: 0;
+  color: var(--primary, #4f46e5);
+}
+
+.interview-link {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--primary, #4f46e5);
+  text-decoration: none;
+  word-break: break-all;
+  transition: color 0.15s;
+}
+
+.interview-link:hover {
+  color: var(--primary-hover, #4338ca);
+  text-decoration: underline;
+}
+
+.interview-location {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 700px) {
+  .summary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .interview-main {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .interview-icon {
+    display: none;
+  }
+}

@@ -1,0 +1,86 @@
+<div class="applications-page">
+
+  <section class="page-header">
+    <div>
+      <h1>Applications</h1>
+      <p class="page-subtitle">Manage all candidate applications across your posted jobs.</p>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-strip">
+    <div class="stat-card">
+      <div class="stat-icon stat-blue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div><span class="stat-label">Total</span><strong class="stat-number">{{ total }}</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-green">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div><span class="stat-label">Shortlisted</span><strong class="stat-number">{{ shortlisted }}</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-orange">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div><span class="stat-label">Pending</span><strong class="stat-number">{{ pending }}</strong></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-red">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <div><span class="stat-label">Rejected</span><strong class="stat-number">{{ rejected }}</strong></div>
+    </div>
+  </section>
+
+  <!-- Application Cards -->
+  <section class="apps-section">
+    <div class="section-header-row">
+      <h2>All Applications</h2>
+    </div>
+
+    <div class="apps-list">
+      <div class="app-card" *ngFor="let app of applications">
+        <div class="app-avatar">{{ app.candidateId }}</div>
+
+        <div class="app-main">
+          <p class="app-email">Candidate #{{ app.candidateId }}</p>
+          <div class="app-meta">
+            <span>Job #{{ app.jobId }}</span>
+            <span>Applied {{ app.appliedAt | date:'mediumDate' }}</span>
+          </div>
+        </div>
+
+        <div class="app-right">
+          <span
+            class="status-pill"
+            [class.status-applied]="app.status === 'APPLIED'"
+            [class.status-shortlisted]="app.status === 'SHORTLISTED'"
+            [class.status-rejected]="app.status === 'REJECTED'"
+            [class.status-accepted]="app.status === 'ACCEPTED'"
+          >{{ app.status }}</span>
+
+          <a [routerLink]="['/recruiter/jobs', app.jobId, 'applications']" class="btn-outline-sm">
+            View Details →
+          </a>
+        </div>
+      </div>
+
+      <div class="empty-state-row" *ngIf="applications.length === 0">
+        <p>No applications received yet. Post jobs to start receiving applications.</p>
+      </div>
+    </div>
+  </section>
+
+</div>

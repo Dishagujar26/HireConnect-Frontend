@@ -1,0 +1,97 @@
+<div class="candidate-applications-page">
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <section class="page-header">
+    <p class="page-label">Candidate workspace</p>
+    <h1>My Applications</h1>
+    <p class="page-subtitle">
+      Track the status of the jobs you've applied for and stay updated on your hiring progress.
+    </p>
+  </section>
+
+  <!-- ── Summary Stats ──────────────────────────────────────── -->
+  <section class="summary-row">
+    <div class="summary-card">
+      <span>Total</span>
+      <strong>{{ totalCount }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Applied</span>
+      <strong>{{ appliedCount }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Shortlisted</span>
+      <strong>{{ shortlistedCount }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Rejected</span>
+      <strong>{{ rejectedCount }}</strong>
+    </div>
+    <div class="summary-card">
+      <span>Accepted</span>
+      <strong>{{ acceptedCount }}</strong>
+    </div>
+  </section>
+
+  <!-- ── Filters ─────────────────────────────────────────────── -->
+  <section class="filter-row">
+    <button type="button" class="filter-tab" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">All</button>
+    <button type="button" class="filter-tab" [class.active]="activeFilter === 'APPLIED'" (click)="setFilter('APPLIED')">Applied</button>
+    <button type="button" class="filter-tab" [class.active]="activeFilter === 'SHORTLISTED'" (click)="setFilter('SHORTLISTED')">Shortlisted</button>
+    <button type="button" class="filter-tab" [class.active]="activeFilter === 'REJECTED'" (click)="setFilter('REJECTED')">Rejected</button>
+    <button type="button" class="filter-tab" [class.active]="activeFilter === 'ACCEPTED'" (click)="setFilter('ACCEPTED')">Accepted</button>
+  </section>
+
+  <!-- ── Loading ─────────────────────────────────────────────── -->
+  <div class="loading-state" *ngIf="isLoading">Loading applications…</div>
+
+  <!-- ── Empty ───────────────────────────────────────────────── -->
+  <div class="empty-state" *ngIf="!isLoading && filteredApplications.length === 0">
+    <h3>No applications found</h3>
+    <p>Your job applications will appear here once you apply.</p>
+    <a routerLink="/jobs" class="browse-btn">Browse Jobs</a>
+  </div>
+
+  <!-- ── List ────────────────────────────────────────────────── -->
+  <div class="applications-list" *ngIf="!isLoading && filteredApplications.length > 0">
+    <article class="application-card" *ngFor="let app of filteredApplications">
+
+      <div class="application-icon">
+        {{ getJobTitle(app.jobId).charAt(0) }}
+      </div>
+
+      <div class="application-main">
+        <div class="application-content">
+
+          <div class="title-block">
+            <h3>{{ getJobTitle(app.jobId) }}</h3>
+            <p class="company-name">{{ getCompanyName(app.jobId) }}</p>
+          </div>
+
+          <div class="meta-row">
+            <span class="meta-chip">{{ getLocation(app.jobId) }}</span>
+            <span class="meta-chip">Applied {{ app.appliedAt | date:'mediumDate' }}</span>
+            <span class="meta-chip">#{{ app.applicationId }}</span>
+          </div>
+
+          <span
+            class="status-badge"
+            [class.applied]="app.status === 'APPLIED'"
+            [class.shortlisted]="app.status === 'SHORTLISTED'"
+            [class.rejected]="app.status === 'REJECTED'"
+            [class.accepted]="app.status === 'ACCEPTED'"
+          >
+            {{ app.status }}
+          </span>
+
+        </div>
+      </div>
+
+      <div class="application-actions">
+        <a [routerLink]="['/jobs', app.jobId]" class="view-btn">View Job →</a>
+      </div>
+
+    </article>
+  </div>
+
+</div>
