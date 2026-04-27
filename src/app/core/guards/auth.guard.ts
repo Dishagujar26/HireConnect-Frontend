@@ -21,13 +21,11 @@ export const authGuard: CanActivateFn = () => {
       if (response.valid) {
         return true;
       } else {
-        authStorage.clearSession();
         router.navigate(['/login']);
         return false;
       }
     }),
     catchError(() => {
-      authStorage.clearSession();
       router.navigate(['/login']);
       return of(false);
     })

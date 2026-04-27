@@ -136,7 +136,32 @@ export class RecruiterJobsComponent implements OnInit {
         description: `Promote job: ${job.title}`
       })
       .subscribe({
-        next: (order) => this.openRazorpay(job, order),
+        next: (order) => {
+          if (order.orderId.startsWith('order_mock_')) {
+            console.info('Mock order detected. Auto-verifying payment...');
+            this.paymentService.verifyPayment({
+              razorpayOrderId: order.orderId,
+              razorpayPaymentId: 'pay_mock_' + Date.now(),
+              razorpaySignature: 'sig_mock_' + Date.now()
+            }).subscribe({
+              next: () => {
+                this.jobService.markJobAsFeatured(job.jobId).subscribe({
+                  next: () => {
+                    this.processingJobId = null;
+                    this.toastService.show(`[MOCK] Job "${job.title}" is now featured.`, 'success');
+                    setTimeout(() => window.location.reload(), 800);
+                  }
+                });
+              },
+              error: (err) => {
+                this.processingJobId = null;
+                this.toastService.show('Mock verification failed', 'error');
+              }
+            });
+          } else {
+            this.openRazorpay(job, order);
+          }
+        },
         error: (error) => {
           this.processingJobId = null;
           const message = error?.error?.message || 'Failed to create payment order';
