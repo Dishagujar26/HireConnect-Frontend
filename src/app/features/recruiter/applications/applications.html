@@ -7,7 +7,7 @@
     </div>
   </section>
 
-  <!-- Stats -->
+  <!-- Stats Strip -->
   <section class="stats-strip">
     <div class="stat-card">
       <div class="stat-icon stat-blue">
@@ -44,38 +44,66 @@
     </div>
   </section>
 
-  <!-- Application Cards -->
+  <!-- Application Grid -->
   <section class="apps-section">
     <div class="section-header-row">
       <h2>All Applications</h2>
     </div>
 
-    <div class="apps-list">
-      <div class="app-card" *ngFor="let app of applications">
-        <div class="app-avatar">{{ app.candidateId }}</div>
+    <div class="apps-grid">
+      <article
+        class="application-card"
+        *ngFor="let app of applications"
+        [routerLink]="['/recruiter/candidates', app.candidateId, 'job', app.jobId]"
+      >
+        <div class="application-header">
+          <div class="application-icon" *ngIf="app.candidateProfile as profile">
+            {{ profile.firstName.charAt(0) }}{{ profile.lastName ? profile.lastName.charAt(0) : '' }}
+          </div>
+          <div class="application-icon fallback" *ngIf="!app.candidateProfile">
+            {{ app.candidateId }}
+          </div>
+          <span
+            class="status-badge"
+            [class.applied]="app.status === 'APPLIED'"
+            [class.shortlisted]="app.status === 'SHORTLISTED'"
+            [class.rejected]="app.status === 'REJECTED' || app.status === 'OFFER_REJECTED'"
+            [class.accepted]="app.status === 'ACCEPTED' || app.status === 'OFFER_ACCEPTED'"
+          >
+            {{ getStatusLabel(app.status) }}
+          </span>
+        </div>
 
-        <div class="app-main">
-          <p class="app-email">Candidate #{{ app.candidateId }}</p>
-          <div class="app-meta">
-            <span>Job #{{ app.jobId }}</span>
-            <span>Applied {{ app.appliedAt | date:'mediumDate' }}</span>
+        <div class="application-main">
+          <div class="title-block">
+            <h3 *ngIf="app.candidateProfile as profile">{{ profile.firstName }} {{ profile.lastName || '' }}</h3>
+            <h3 *ngIf="!app.candidateProfile">Candidate #{{ app.candidateId }}</h3>
+            <p class="headline-text" *ngIf="app.candidateProfile?.headline">{{ app.candidateProfile.headline }}</p>
+          </div>
+
+          <div class="meta-row">
+            <span class="meta-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              </svg>
+              Job ID: #{{ app.jobId }}
+            </span>
+            <span class="meta-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              Applied {{ app.appliedAt | date:'mediumDate' }}
+            </span>
           </div>
         </div>
 
-        <div class="app-right">
-          <span
-            class="status-pill"
-            [class.status-applied]="app.status === 'APPLIED'"
-            [class.status-shortlisted]="app.status === 'SHORTLISTED'"
-            [class.status-rejected]="app.status === 'REJECTED'"
-            [class.status-accepted]="app.status === 'ACCEPTED'"
-          >{{ app.status }}</span>
-
-          <a [routerLink]="['/recruiter/jobs', app.jobId, 'applications']" class="btn-outline-sm">
-            View Details →
-          </a>
+        <div class="view-hint">
+          View Details →
         </div>
-      </div>
+      </article>
 
       <div class="empty-state-row" *ngIf="applications.length === 0">
         <p>No applications received yet. Post jobs to start receiving applications.</p>

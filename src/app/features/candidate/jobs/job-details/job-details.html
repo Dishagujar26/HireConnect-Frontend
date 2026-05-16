@@ -2,57 +2,161 @@
 
   <!-- ── Breadcrumb / Back ──────────────────────────── -->
   <div class="breadcrumb">
-    <a routerLink="/jobs" class="back-link">
+    <a [routerLink]="fromApplications ? '/candidate/applications' : '/jobs'" class="back-link">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <polyline points="15 18 9 12 15 6"/>
       </svg>
-      Back to Jobs
+      {{ fromApplications ? 'Back to Applications' : 'Back to Jobs' }}
     </a>
     <span class="breadcrumb-sep">/</span>
     <span class="breadcrumb-current">{{ job.title }}</span>
   </div>
 
-  <!-- ── Two-Column Layout ──────────────────────────── -->
+  <!-- ── Top Hero Row ────────────────────────────── -->
+  <div class="jd-hero-row">
+    <!-- Job Header Card -->
+    <div class="jd-header-card">
+      <div class="jd-company-logo">
+        {{ job.companyName.charAt(0).toUpperCase() || 'C' }}
+      </div>
+      <div class="jd-header-info">
+        <h1>{{ job.title }}</h1>
+        <p class="jd-company">{{ job.companyName }}</p>
+
+        <div class="jd-meta-row">
+          <span class="meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ job.location }}
+          </span>
+          <span class="meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+            {{ job.jobType }}
+          </span>
+          <span class="meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            {{ job.experienceLevel }}
+          </span>
+        </div>
+
+        <div class="jd-badges">
+          <span class="status-badge" 
+            [class.applied-badge]="alreadyApplied" 
+            [class.offer-badge]="currentApplication?.status === 'ACCEPTED'"
+            [class.offer-accepted-badge]="currentApplication?.status === 'OFFER_ACCEPTED'"
+            [class.offer-rejected-badge]="currentApplication?.status === 'OFFER_REJECTED'"
+          >
+            <ng-container *ngIf="!currentApplication; else appStatus">
+              {{ job.status }}
+            </ng-container>
+            <ng-template #appStatus>
+              <span *ngIf="currentApplication.status === 'ACCEPTED'">🎉 Offer Received</span>
+              <span *ngIf="currentApplication.status === 'OFFER_ACCEPTED'">✓ Offer Accepted</span>
+              <span *ngIf="currentApplication.status === 'OFFER_REJECTED'">❌ Offer Rejected</span>
+              <span *ngIf="currentApplication.status !== 'ACCEPTED' && currentApplication.status !== 'OFFER_ACCEPTED' && currentApplication.status !== 'OFFER_REJECTED'">
+                ✓ {{ currentApplication.status.replace('_', ' ') }}
+              </span>
+            </ng-template>
+          </span>
+          <span class="featured-badge" *ngIf="job.isFeatured">⭐ Featured</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apply Card (Moved from sidebar to hero) -->
+    <div class="sidebar-apply-card hero-apply">
+      <div class="salary-display">{{ formatSalary() }}</div>
+      <p class="salary-label">Annual Package</p>
+
+      <!-- Standard Apply/Applied Button -->
+      <button
+        *ngIf="!currentApplication || (currentApplication.status !== 'ACCEPTED' && currentApplication.status !== 'OFFER_ACCEPTED' && currentApplication.status !== 'OFFER_REJECTED')"
+        class="btn-apply-full"
+        type="button"
+        (click)="applyToJob()"
+        [disabled]="alreadyApplied || isApplying"
+      >
+        <svg *ngIf="!alreadyApplied && !isApplying" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+        </svg>
+        {{ isApplying ? 'Applying...' : alreadyApplied ? '✓ Already Applied' : 'Apply Now' }}
+      </button>
+
+      <!-- Offer Response Buttons -->
+      <div class="sidebar-offer-actions" *ngIf="currentApplication?.status === 'ACCEPTED'">
+        <button class="offer-accept-btn" (click)="respondToOffer(true)">
+          Accept Offer
+        </button>
+        <button class="offer-reject-btn" (click)="respondToOffer(false)">
+          Reject Offer
+        </button>
+      </div>
+
+      <!-- Result Badges -->
+      <div class="result-badge accepted" *ngIf="currentApplication?.status === 'OFFER_ACCEPTED'">
+        Offer Accepted ✓
+      </div>
+      <div class="result-badge rejected" *ngIf="currentApplication?.status === 'OFFER_REJECTED'">
+        Offer Rejected ❌
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Two-Column Layout (Body Content) ──────────────── -->
   <div class="details-layout">
 
     <!-- LEFT: Main Content -->
     <div class="details-main">
 
-      <!-- Job Header Card -->
-      <div class="jd-header-card">
-        <div class="jd-company-logo">
-          {{ job.companyName?.charAt(0)?.toUpperCase() || 'C' }}
+      <!-- Hiring Pipeline (Visible only if applied) -->
+      <div class="jd-section-card" *ngIf="alreadyApplied && currentApplication">
+        <div class="jd-section-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Hiring Pipeline
         </div>
-        <div class="jd-header-info">
-          <h1>{{ job.title }}</h1>
-          <p class="jd-company">{{ job.companyName }}</p>
+        
+        <div class="pipeline-track">
+          <div
+            class="pipeline-step"
+            *ngFor="let step of pipelineSteps; let i = index"
+            [class.completed]="i < pipelineCurrentIndex"
+            [class.current]="i === pipelineCurrentIndex"
+            [class.upcoming]="i > pipelineCurrentIndex"
+          >
+            <div class="pipeline-left">
+              <div class="pipeline-marker">
+                <span class="pipeline-icon" *ngIf="i < pipelineCurrentIndex">✓</span>
+                <span class="pipeline-icon" *ngIf="i === pipelineCurrentIndex">•</span>
+                <span class="pipeline-icon" *ngIf="i > pipelineCurrentIndex">○</span>
+              </div>
+              <div class="pipeline-connector" *ngIf="i !== pipelineSteps.length - 1"></div>
+            </div>
 
-          <div class="jd-meta-row">
-            <span class="meta-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-              </svg>
-              {{ job.location }}
-            </span>
-            <span class="meta-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-              </svg>
-              {{ job.jobType }}
-            </span>
-            <span class="meta-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-              </svg>
-              {{ job.experienceLevel }}
-            </span>
-          </div>
-
-          <div class="jd-badges">
-            <span class="status-badge" [class.applied-badge]="alreadyApplied">
-              {{ alreadyApplied ? '✓ Applied' : job.status }}
-            </span>
-            <span class="featured-badge" *ngIf="job.isFeatured">⭐ Featured</span>
+            <div class="pipeline-content">
+              <div class="pipeline-title">
+                {{ step.title }}
+              </div>
+              <div class="pipeline-sub">
+                <ng-container *ngIf="i === 0 && currentApplication?.appliedAt">
+                  Applied {{ currentApplication?.appliedAt | date:'mediumDate' }}
+                </ng-container>
+                <ng-container *ngIf="i !== 0 && i !== 3">
+                  <span *ngIf="i < pipelineCurrentIndex">Completed</span>
+                  <span *ngIf="i === pipelineCurrentIndex">In progress</span>
+                  <span *ngIf="i > pipelineCurrentIndex">Pending</span>
+                </ng-container>
+                <ng-container *ngIf="i === 3">
+                  {{ pipelineFinalDecisionTitle }}
+                </ng-container>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -90,27 +194,6 @@
 
     <!-- RIGHT: Sticky Sidebar -->
     <aside class="details-sidebar">
-
-      <!-- Apply Card -->
-      <div class="sidebar-apply-card">
-        <div class="salary-display">{{ formatSalary() }}</div>
-        <p class="salary-label">Annual Package</p>
-
-        <button
-          class="btn-apply-full"
-          type="button"
-          (click)="applyToJob()"
-          [disabled]="alreadyApplied || isApplying"
-        >
-          <svg *ngIf="!alreadyApplied && !isApplying" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
-          </svg>
-          {{ isApplying ? 'Applying...' : alreadyApplied ? '✓ Already Applied' : 'Apply Now' }}
-        </button>
-
-        <a routerLink="/jobs" class="btn-back-link">← Back to all jobs</a>
-      </div>
-
       <!-- Job Info Summary -->
       <div class="sidebar-info-card">
         <h4>Job Overview</h4>

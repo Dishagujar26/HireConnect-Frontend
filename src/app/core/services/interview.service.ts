@@ -9,6 +9,7 @@ export interface InterviewRequest {
   scheduledAt: string;
   durationMinutes: number;
   modeDetails: string;
+  meetingLink: string;
   notes: string;
 }
 
@@ -26,6 +27,9 @@ export interface InterviewResponse {
   modeDetails?: string | null;
   notes: string;
   status: string;
+  technicalScore?: number;
+  communicationScore?: number;
+  feedback?: string;
   createdAt?: string;
   updatedAt?: string;
   title?: string;
@@ -56,10 +60,15 @@ export class InterviewService {
   }
 
   cancelInterview(interviewId: number): Observable<InterviewResponse> {
-    return this.http.put<InterviewResponse>(
-      `${this.baseUrl}/${interviewId}/cancel`,
-      {}
-    );
+    return this.http.delete<InterviewResponse>(`${this.baseUrl}/cancel/${interviewId}`);
+  }
+
+  completeInterview(interviewId: number, request: any): Observable<InterviewResponse> {
+    return this.http.post<InterviewResponse>(`${this.baseUrl}/${interviewId}/complete`, request);
+  }
+
+  updateInterview(interviewId: number, request: any): Observable<InterviewResponse> {
+    return this.http.put<InterviewResponse>(`${this.baseUrl}/${interviewId}`, request);
   }
 
   formatInterviewType(type: string): string {

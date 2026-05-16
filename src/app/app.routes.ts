@@ -23,6 +23,14 @@ import { JobDetailsComponent } from './features/candidate/jobs/job-details/job-d
 import { CandidateApplicationsComponent } from './features/candidate/applications/candidate-applications/candidate-applications';
 import { CandidateInterviewsComponent } from './features/candidate/interviews/candidate-interviews/candidate-interviews';
 import { RecruiterBillingComponent } from './features/recruiter/recruiter-billing/recruiter-billing';
+import { CandidateProfilePageComponent } from './features/recruiter/candidate-profile-page/candidate-profile-page';
+import { RecommendedJobsComponent } from './features/candidate/recommended-jobs/recommended-jobs';
+import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard';
+import { AdminUsersComponent } from './features/admin/admin-users/admin-users';
+import { AdminJobsComponent } from './features/admin/admin-jobs/admin-jobs';
+import { AdminBroadcastComponent } from './features/admin/admin-broadcast/admin-broadcast';
+import { AdminFinanceComponent } from './features/admin/admin-finance/admin-finance';
+
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
@@ -44,17 +52,27 @@ export const routes: Routes = [
       { path: 'recruiter/jobs/create', component: CreateJobComponent },
       { path: 'recruiter/jobs/:jobId/edit', component: EditJobComponent },
       { path: 'recruiter/jobs/:jobId/applications', component: RecruiterJobApplicationsComponent },
+      { path: 'recruiter/candidates/:candidateId/job/:jobId', component: CandidateProfilePageComponent },
       { path: 'recruiter/applications', component: RecruiterApplicationsComponent },
       { path: 'recruiter/interviews', component: RecruiterInterviewsComponent },
       { path: 'recruiter/interviews/schedule/:applicationId', component: ScheduleInterviewComponent },
+      { path: 'recruiter/interviews/edit/:interviewId', component: ScheduleInterviewComponent },
 
       { path: 'profile', component: ProfileComponent },
       { path: 'jobs/:jobId', component: JobDetailsComponent },
       { path: 'jobs', component: CandidateJobsComponent },
       { path: 'candidate/applications', component: CandidateApplicationsComponent },
+      { path: 'candidate/recommended-jobs', component: RecommendedJobsComponent },
       { path: 'notifications', component: NotificationsComponent },
       { path: 'candidate/interviews', component: CandidateInterviewsComponent },
       { path: 'recruiter/billing', component: RecruiterBillingComponent },
+
+      // ── Admin Routes ──────────────────────────────────────────────────
+      { path: 'admin/dashboard', component: AdminDashboardComponent },
+      { path: 'admin/users', component: AdminUsersComponent },
+      { path: 'admin/jobs', component: AdminJobsComponent },
+      { path: 'admin/broadcast', component: AdminBroadcastComponent },
+      { path: 'admin/finance', component: AdminFinanceComponent },
     ]
   },
 

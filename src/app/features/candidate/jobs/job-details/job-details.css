@@ -41,12 +41,29 @@
 }
 
 /* ── Layout ───────────────────────────────────── */
-.details-layout {
+.jd-hero-row {
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 20px;
+  margin-bottom: 12px;
+  align-items: stretch;
+}
+
+.details-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
   align-items: start;
 }
+
+.hero-apply {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mb-16 { margin-bottom: 16px; }
 
 /* ── Main Column ─────────────────────────────── */
 .details-main {
@@ -149,6 +166,24 @@
   border-color: var(--info-border);
 }
 
+.offer-badge {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+}
+
+.offer-accepted-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--info-border);
+}
+
+.offer-rejected-badge {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fee2e2;
+}
+
 .featured-badge {
   display: inline-flex;
   align-items: center;
@@ -217,7 +252,7 @@
 .details-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   position: sticky;
   top: calc(var(--topbar-h) + 24px);
 }
@@ -277,6 +312,68 @@
   opacity: 0.65;
   cursor: not-allowed;
   transform: none;
+}
+
+/* ── Offer Response Buttons ──────────────────── */
+.sidebar-offer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.offer-accept-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(39, 93, 245, 0.2);
+}
+
+.offer-accept-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.offer-reject-btn {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  color: #dc2626;
+  border: 1.5px solid #fee2e2;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.offer-reject-btn:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.result-badge {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  text-align: center;
+  font-size: 14px;
+}
+
+.result-badge.accepted {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.result-badge.rejected {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
 }
 
 .btn-back-link {
@@ -370,6 +467,7 @@
 
 /* ── Responsive ──────────────────────────────── */
 @media (max-width: 900px) {
+  .jd-hero-row,
   .details-layout {
     grid-template-columns: 1fr;
   }
@@ -389,3 +487,88 @@
     font-size: 19px;
   }
 }
+
+/* ── Hiring Pipeline ───────────────────────────── */
+.pipeline-track {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.pipeline-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.pipeline-left {
+  width: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.pipeline-marker {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border-strong);
+  background: white;
+  flex-shrink: 0;
+}
+
+.pipeline-icon {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.pipeline-connector {
+  width: 2px;
+  flex: 1;
+  min-height: 18px;
+  background: var(--border);
+  margin-top: 2px;
+}
+
+.pipeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.pipeline-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+}
+
+.pipeline-sub {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.pipeline-step.completed .pipeline-marker {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+.pipeline-step.completed .pipeline-icon {
+  color: #16a34a;
+}
+
+.pipeline-step.current .pipeline-marker {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.pipeline-step.upcoming .pipeline-marker {
+  border-color: var(--border-strong);
+}

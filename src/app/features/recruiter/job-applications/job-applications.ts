@@ -8,6 +8,8 @@ import {
 import { ToastService } from '../../../core/services/toast.service';
 import { ConfirmModalService } from '../../../core/services/confirm-modal.service';
 import { ProfileService } from '../../../core/services/profile.service';
+import { JobService } from '../../../core/services/job.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-job-applications',
@@ -21,15 +23,22 @@ export class RecruiterJobApplicationsComponent implements OnInit {
   applications: RecruiterJobApplicationResponse[] = [];
   isLoading = false;
 
-  // [Disha Gujar] : Track which candidateId is currently being downloaded
+  // [Disha Gujar] : Resume download state
   downloadingResumeFor: number | null = null;
+
+
+
+  // Map to store match scores: candidateId -> MatchScoreResponseDto
+  matchScores: { [candidateId: number]: any } = {};
 
   constructor(
     private route: ActivatedRoute,
     private appService: ApplicationService,
     private toastService: ToastService,
     private confirmModal: ConfirmModalService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private jobService: JobService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -39,17 +48,48 @@ export class RecruiterJobApplicationsComponent implements OnInit {
 
   loadApplications(): void {
     this.isLoading = true;
-
     this.appService.getApplicationsByJob(this.jobId).subscribe({
       next: (res) => {
         this.applications = res;
         this.isLoading = false;
+        this.calculateMatchScores();
       },
       error: () => {
         this.toastService.show('Failed to load applications', 'error');
         this.isLoading = false;
       }
     });
+  }
+
+  // [Smart Features] : Calculate match scores in parallel for all applicants
+  calculateMatchScores(): void {
+    this.applications.forEach(app => {
+      if (app.candidateId) {
+        this.profileService.getCandidateFullProfile(app.candidateId, this.jobId).subscribe({
+          next: (profile) => {
+            const skills = profile.skills?.map((s: any) => s.name) || [];
+            if (skills.length > 0) {
+              this.jobService.getJobMatchScore(this.jobId, skills).subscribe({
+                next: (score) => {
+                  this.matchScores[app.candidateId!] = score;
+                }
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+
+  getMatchBadgeClass(score: number): string {
+    if (score >= 70) return 'match-high';
+    if (score >= 40) return 'match-medium';
+    return 'match-low';
+  }
+
+  // [Disha Gujar] : Navigate to the comprehensive candidate profile page
+  viewCandidateProfile(candidateId: number): void {
+    this.router.navigate(['/recruiter/candidates', candidateId, 'job', this.jobId]);
   }
 
   async updateStatus(app: RecruiterJobApplicationResponse, status: string): Promise<void> {
@@ -74,13 +114,13 @@ export class RecruiterJobApplicationsComponent implements OnInit {
     });
   }
 
-  // [Disha Gujar] : Resume Download Operations ────────────────────────────────────────
+  // [Disha Gujar] : Resume Download Operations
 
-  downloadResume(candidateId: number): void {
-    if (this.downloadingResumeFor === candidateId) return; // [Disha Gujar] : prevent double-click
+  downloadResume(candidateId: number, event: Event): void {
+    event.stopPropagation(); // prevent card click opening modal
+    if (this.downloadingResumeFor === candidateId) return;
 
     this.downloadingResumeFor = candidateId;
-
     this.profileService.downloadResumeForRecruiter(candidateId, this.jobId).subscribe({
       next: (blob) => {
         this.downloadingResumeFor = null;
@@ -109,5 +149,12 @@ export class RecruiterJobApplicationsComponent implements OnInit {
 
   get rejectedCount(): number {
     return this.applications.filter(app => app.status === 'REJECTED').length;
+  }
+
+  getStatusLabel(status: string): string {
+    if (status === 'ACCEPTED') return 'OFFER SENT';
+    if (status === 'OFFER_ACCEPTED') return 'ACCEPTED';
+    if (status === 'OFFER_REJECTED') return 'REJECTED BY CANDIDATE';
+    return status;
   }
 }

@@ -61,6 +61,8 @@ export class LoginComponent {
           this.router.navigate(['/candidate/dashboard']);
         } else if (response.role === 'RECRUITER') {
           this.router.navigate(['/recruiter/dashboard']);
+        } else if (response.role === 'ADMIN') {
+          this.router.navigate(['/admin/dashboard']);
         }
       },
       error: (error) => {

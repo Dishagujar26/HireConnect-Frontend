@@ -9,38 +9,6 @@
     </p>
   </section>
 
-  <!-- ── Summary Stats ──────────────────────────────────────── -->
-  <section class="summary-row">
-    <div class="summary-card">
-      <span>Total</span>
-      <strong>{{ totalCount }}</strong>
-    </div>
-    <div class="summary-card">
-      <span>Applied</span>
-      <strong>{{ appliedCount }}</strong>
-    </div>
-    <div class="summary-card">
-      <span>Shortlisted</span>
-      <strong>{{ shortlistedCount }}</strong>
-    </div>
-    <div class="summary-card">
-      <span>Rejected</span>
-      <strong>{{ rejectedCount }}</strong>
-    </div>
-    <div class="summary-card">
-      <span>Accepted</span>
-      <strong>{{ acceptedCount }}</strong>
-    </div>
-  </section>
-
-  <!-- ── Filters ─────────────────────────────────────────────── -->
-  <section class="filter-row">
-    <button type="button" class="filter-tab" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">All</button>
-    <button type="button" class="filter-tab" [class.active]="activeFilter === 'APPLIED'" (click)="setFilter('APPLIED')">Applied</button>
-    <button type="button" class="filter-tab" [class.active]="activeFilter === 'SHORTLISTED'" (click)="setFilter('SHORTLISTED')">Shortlisted</button>
-    <button type="button" class="filter-tab" [class.active]="activeFilter === 'REJECTED'" (click)="setFilter('REJECTED')">Rejected</button>
-    <button type="button" class="filter-tab" [class.active]="activeFilter === 'ACCEPTED'" (click)="setFilter('ACCEPTED')">Accepted</button>
-  </section>
 
   <!-- ── Loading ─────────────────────────────────────────────── -->
   <div class="loading-state" *ngIf="isLoading">Loading applications…</div>
@@ -54,41 +22,52 @@
 
   <!-- ── List ────────────────────────────────────────────────── -->
   <div class="applications-list" *ngIf="!isLoading && filteredApplications.length > 0">
-    <article class="application-card" *ngFor="let app of filteredApplications">
+    <article 
+      class="application-card" 
+      *ngFor="let app of filteredApplications"
+      [routerLink]="['/jobs', app.jobId]" 
+      [queryParams]="{ from: 'applications' }"
+    >
 
-      <div class="application-icon">
-        {{ getJobTitle(app.jobId).charAt(0) }}
+      <div class="application-header">
+        <div class="application-icon">
+          {{ getJobTitle(app.jobId).charAt(0) }}
+        </div>
+        <span
+          class="status-badge"
+          [class.applied]="app.status === 'APPLIED'"
+          [class.shortlisted]="app.status === 'SHORTLISTED'"
+          [class.rejected]="app.status === 'REJECTED' || app.status === 'OFFER_REJECTED'"
+          [class.accepted]="app.status === 'ACCEPTED' || app.status === 'OFFER_ACCEPTED'"
+        >
+          {{ app.status === 'ACCEPTED' ? 'OFFER RECEIVED' : app.status.replace('_', ' ') }}
+        </span>
       </div>
 
       <div class="application-main">
-        <div class="application-content">
-
-          <div class="title-block">
-            <h3>{{ getJobTitle(app.jobId) }}</h3>
-            <p class="company-name">{{ getCompanyName(app.jobId) }}</p>
-          </div>
-
-          <div class="meta-row">
-            <span class="meta-chip">{{ getLocation(app.jobId) }}</span>
-            <span class="meta-chip">Applied {{ app.appliedAt | date:'mediumDate' }}</span>
-            <span class="meta-chip">#{{ app.applicationId }}</span>
-          </div>
-
-          <span
-            class="status-badge"
-            [class.applied]="app.status === 'APPLIED'"
-            [class.shortlisted]="app.status === 'SHORTLISTED'"
-            [class.rejected]="app.status === 'REJECTED'"
-            [class.accepted]="app.status === 'ACCEPTED'"
-          >
-            {{ app.status }}
-          </span>
-
+        <div class="title-block">
+          <h3>{{ getJobTitle(app.jobId) }}</h3>
+          <p class="company-name">{{ getCompanyName(app.jobId) }}</p>
         </div>
-      </div>
 
-      <div class="application-actions">
-        <a [routerLink]="['/jobs', app.jobId]" class="view-btn">View Job →</a>
+        <div class="meta-row">
+          <span class="meta-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            {{ getLocation(app.jobId) }}
+          </span>
+          <span class="meta-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Applied {{ app.appliedAt | date:'mediumDate' }}
+          </span>
+        </div>
       </div>
 
     </article>

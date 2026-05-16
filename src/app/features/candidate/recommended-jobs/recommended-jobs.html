@@ -1,0 +1,161 @@
+<div class="recommended-page">
+  <section class="page-header">
+    <div>
+      <h1>Jobs For You</h1>
+      <p class="page-subtitle">
+        Personalized job recommendations based on your resume and profile skills.
+      </p>
+    </div>
+  </section>
+  
+  <!-- ── Search + Filters ──────────────────────────── -->
+  <section class="search-filter-bar" *ngIf="profileExists && !isLoading">
+    <div class="search-box">
+      <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+        placeholder="Search recommended jobs by title, company, skills..."
+      />
+      <button *ngIf="searchTerm" class="clear-btn" type="button" (click)="clearSearch()">✕</button>
+    </div>
+
+    <div class="filter-chips">
+      <button type="button" class="chip" [class.chip-active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">
+        All Jobs
+      </button>
+      <button type="button" class="chip" [class.chip-active]="activeFilter === 'NOT_APPLIED'" (click)="setFilter('NOT_APPLIED')">
+        Not Applied
+      </button>
+      <button type="button" class="chip" [class.chip-active]="activeFilter === 'APPLIED'" (click)="setFilter('APPLIED')">
+        Applied
+      </button>
+    </div>
+  </section>
+
+  <!-- ── Results Count ─────────────────────────────── -->
+  <div class="results-info" *ngIf="!isLoading && filteredRecommendedJobs.length > 0">
+    <strong>{{ filteredRecommendedJobs.length }}</strong> job{{ filteredRecommendedJobs.length !== 1 ? 's' : '' }} found
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Finding the perfect matches for your skills...</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && recommendedJobs.length === 0 && profileExists">
+    <div class="empty-icon">🎯</div>
+    <h3>No Matches Found Yet</h3>
+    <p>Upload your latest resume or add more skills to your profile to get personalized recommendations.</p>
+    <a routerLink="/profile" class="btn-primary mt-3">Update Profile</a>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && !profileExists">
+    <div class="empty-icon">📝</div>
+    <h3>Complete Your Profile</h3>
+    <p>You need to create a profile before we can recommend jobs to you.</p>
+    <a routerLink="/profile" class="btn-primary mt-3">Create Profile</a>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && recommendedJobs.length > 0 && filteredRecommendedJobs.length === 0">
+    <div class="empty-icon">🔍</div>
+    <h3>No search results</h3>
+    <p>We couldn't find any recommended jobs matching "{{ searchTerm }}".</p>
+    <button class="btn-primary mt-3" (click)="clearSearch()">Clear Search</button>
+  </div>
+
+  <div class="job-list" *ngIf="!isLoading && filteredRecommendedJobs.length > 0">
+    <article
+      class="job-card"
+      *ngFor="let rec of filteredRecommendedJobs"
+      [routerLink]="['/jobs', rec.job.jobId]"
+      [class.featured-card]="rec.job.isFeatured"
+    >
+      <!-- Featured ribbon (absolute top-right, same as Browse Jobs) -->
+      <div class="featured-ribbon" *ngIf="rec.job.isFeatured">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Featured
+      </div>
+
+      <!-- Left: Company Logo -->
+      <div class="job-company-logo">
+        {{ rec.job.companyName.charAt(0).toUpperCase() || 'C' }}
+      </div>
+
+      <!-- Center: Job Details -->
+      <div class="job-info">
+        <div class="job-title-row">
+          <h3>{{ rec.job.title }}</h3>
+          <div class="match-badge" [ngClass]="{'match-high': rec.matchScore >= 70}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            {{ rec.matchScore }}% Match
+          </div>
+        </div>
+        <p class="job-company">{{ rec.job.companyName }}</p>
+
+        <div class="job-meta-row">
+          <span class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ rec.job.location }}
+          </span>
+          <span class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+            {{ rec.job.jobType }}
+          </span>
+          <span class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            {{ rec.job.experienceLevel }}
+          </span>
+        </div>
+
+        <p class="job-description">{{ rec.job.description }}</p>
+
+        <div class="skills-row" *ngIf="rec.job.skillsRequired">
+          <span class="skill-chip" *ngFor="let skill of rec.job.skillsRequired.split(',').slice(0,4)">
+            {{ skill.trim() }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: Salary + Status + Actions -->
+      <div class="job-right">
+        <div class="job-salary" *ngIf="rec.job.salaryMin && rec.job.salaryMax">
+          ₹{{ rec.job.salaryMin.toLocaleString() }} - ₹{{ rec.job.salaryMax.toLocaleString() }}
+        </div>
+        <div class="job-salary" *ngIf="!(rec.job.salaryMin && rec.job.salaryMax)">
+          Not Disclosed
+        </div>
+
+        <div class="job-status-row">
+          <span class="status-badge" [class.status-applied]="isApplied(rec.job.jobId)">
+            {{ isApplied(rec.job.jobId) ? 'Applied ✓' : rec.job.status }}
+          </span>
+        </div>
+
+        <div class="job-actions">
+          <a [routerLink]="['/jobs', rec.job.jobId]" class="btn-view">View Details</a>
+          <button
+            class="btn-apply"
+            type="button"
+            (click)="applyToJob(rec.job.jobId, $event)"
+            [disabled]="isApplied(rec.job.jobId) || isApplying(rec.job.jobId)"
+          >
+            {{ isApplying(rec.job.jobId) ? 'Applying...' : isApplied(rec.job.jobId) ? 'Applied' : 'Apply Now' }}
+          </button>
+        </div>
+      </div>
+
+    </article>
+  </div>
+</div>

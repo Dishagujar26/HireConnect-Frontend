@@ -25,6 +25,7 @@ export class ProfileComponent implements OnInit {
   selectedResumeFile: File | null = null;
   isUploadingResume = false;
   isDownloadingResume = false;
+  isViewingResume = false;
   resumeUploadError = '';
   resumeUploadSuccess = '';
 
@@ -105,18 +106,36 @@ export class ProfileComponent implements OnInit {
         recruiterDetail.companyName ||
         recruiterDetail.website ||
         recruiterDetail.companyDescription ||
-        recruiterDetail.designation
+        recruiterDetail.designation ||
+        recruiterDetail.industry ||
+        recruiterDetail.companySize ||
+        recruiterDetail.hiringFor
       ) {
         payload.recruiterDetail = {
           companyName: recruiterDetail.companyName || '',
           website: recruiterDetail.website || '',
           companyDescription: recruiterDetail.companyDescription || '',
-          designation: recruiterDetail.designation || ''
+          designation: recruiterDetail.designation || '',
+          industry: recruiterDetail.industry || '',
+          companySize: recruiterDetail.companySize || '',
+          companyLogoUrl: recruiterDetail.companyLogoUrl || '',
+          companyLinkedinUrl: recruiterDetail.companyLinkedinUrl || '',
+          hiringFor: recruiterDetail.hiringFor || '',
+          yearsInRecruiting: recruiterDetail.yearsInRecruiting || null
         };
       }
     }
 
     if (this.isCandidate) {
+      payload.dateOfBirth = this.editableProfile.dateOfBirth || null;
+      payload.gender = this.editableProfile.gender || '';
+      payload.nationality = this.editableProfile.nationality || '';
+      payload.noticePeriodDays = this.editableProfile.noticePeriodDays != null ? this.editableProfile.noticePeriodDays : null;
+      payload.expectedSalary = this.editableProfile.expectedSalary || null;
+      payload.currentSalary = this.editableProfile.currentSalary || null;
+      payload.preferredWorkMode = this.editableProfile.preferredWorkMode || '';
+      payload.totalExperienceYears = this.editableProfile.totalExperienceYears || null;
+
       payload.skills = this.editableProfile.skills || [];
       payload.educations = this.editableProfile.educations || [];
       payload.experiences = this.editableProfile.experiences || [];
@@ -159,7 +178,7 @@ export class ProfileComponent implements OnInit {
     this.editableProfile.educations = this.editableProfile.educations || [];
     this.editableProfile.educations.push({
       institution: '', degree: '', fieldOfStudy: '',
-      startDate: '', endDate: '', grade: '', description: ''
+      startDate: '', endDate: '', grade: '', description: '', currentlyStudying: false
     });
   }
 
@@ -173,7 +192,7 @@ export class ProfileComponent implements OnInit {
     this.editableProfile.experiences = this.editableProfile.experiences || [];
     this.editableProfile.experiences.push({
       companyName: '', jobTitle: '', employmentType: '', location: '',
-      startDate: '', endDate: '', currentlyWorking: false, description: ''
+      startDate: '', endDate: '', currentlyWorking: false, description: '', industry: ''
     });
   }
 
@@ -217,6 +236,9 @@ export class ProfileComponent implements OnInit {
     this.resumeUploadError = '';
     this.resumeUploadSuccess = '';
     this.selectedResumeFile = file;
+
+    // [Disha Gujar] : Automatically trigger upload after selection
+    this.uploadResume();
   }
 
   uploadResume(): void {
@@ -232,6 +254,34 @@ export class ProfileComponent implements OnInit {
         this.resumeUploadSuccess = message || 'Resume uploaded successfully!';
         this.toastService.show('Resume uploaded successfully', 'success');
         this.selectedResumeFile = null;
+        
+        // [Smart Features] Parse resume automatically after upload
+        this.profileService.parseResume().subscribe({
+          next: (parsedData) => {
+            if (parsedData.extractedSkills && parsedData.extractedSkills.length > 0) {
+              this.toastService.show(`Found ${parsedData.extractedSkills.length} skills in your resume. Auto-filling...`, 'info');
+              
+              // Enable edit mode if not already
+              if (!this.isEditMode) {
+                this.toggleEdit();
+              }
+              
+              // Merge skills
+              this.editableProfile.skills = this.editableProfile.skills || [];
+              const existingSkills = new Set(this.editableProfile.skills.map((s: any) => s.name.toLowerCase()));
+              
+              parsedData.extractedSkills.forEach(skillName => {
+                if (!existingSkills.has(skillName.toLowerCase())) {
+                  this.editableProfile.skills.push({ name: skillName, level: 'Intermediate' });
+                }
+              });
+            }
+          },
+          error: (err) => {
+            console.error('Failed to parse resume', err);
+          }
+        });
+
         // [Disha Gujar] : Reload profile so resume info refreshes
         this.loadProfile();
       },
@@ -258,6 +308,24 @@ export class ProfileComponent implements OnInit {
       error: () => {
         this.isDownloadingResume = false;
         this.toastService.show('Failed to download resume', 'error');
+      }
+    });
+  }
+
+  // [Disha Gujar] : Resume View (Candidate) ───────────────────────────────────────────────
+
+  viewMyResume(): void {
+    this.isViewingResume = true;
+    this.profileService.downloadMyResume().subscribe({
+      next: (blob) => {
+        this.isViewingResume = false;
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+      },
+      error: () => {
+        this.isViewingResume = false;
+        this.toastService.show('Failed to open resume', 'error');
       }
     });
   }
@@ -295,7 +363,12 @@ export class ProfileComponent implements OnInit {
   }
 
   get roleTitle(): string {
+    if (this.userRole === 'ADMIN') return 'Platform Administrator';
     return this.userRole === 'RECRUITER' ? 'Recruiter Profile' : 'Candidate Profile';
+  }
+
+  get isAdmin(): boolean {
+    return this.userRole === 'ADMIN';
   }
 
   get initials(): string {
@@ -314,5 +387,12 @@ export class ProfileComponent implements OnInit {
 
   get isCandidate(): boolean {
     return this.userRole === 'CANDIDATE';
+  }
+
+  scrollTo(elementId: string): void {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }

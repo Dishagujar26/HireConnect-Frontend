@@ -83,7 +83,7 @@
       <article class="job-card" *ngFor="let job of filteredJobs">
 
         <div class="job-card-left">
-          <div class="job-logo">{{ job.companyName?.charAt(0)?.toUpperCase() || 'C' }}</div>
+          <div class="job-logo">{{ job.companyName.charAt(0).toUpperCase() || 'C' }}</div>
           <div class="job-info">
             <h3>{{ job.title }}</h3>
             <p class="job-company">{{ job.companyName }}</p>

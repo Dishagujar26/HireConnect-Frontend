@@ -75,7 +75,13 @@ export class CandidateApplicationsComponent implements OnInit {
     let result = [...this.applications];
 
     if (this.activeFilter !== 'ALL') {
-      result = result.filter(app => app.status === this.activeFilter);
+      if (this.activeFilter === 'ACCEPTED') {
+        result = result.filter(app => app.status === 'ACCEPTED' || app.status === 'OFFER_ACCEPTED');
+      } else if (this.activeFilter === 'REJECTED') {
+        result = result.filter(app => app.status === 'REJECTED' || app.status === 'OFFER_REJECTED');
+      } else {
+        result = result.filter(app => app.status === this.activeFilter);
+      }
     }
 
     this.filteredApplications = result;
@@ -110,6 +116,9 @@ export class CandidateApplicationsComponent implements OnInit {
   }
 
   get acceptedCount(): number {
-    return this.applications.filter(app => app.status === 'ACCEPTED').length;
+    return this.applications.filter(app => 
+      app.status === 'ACCEPTED' || app.status === 'OFFER_ACCEPTED'
+    ).length;
   }
+
 }

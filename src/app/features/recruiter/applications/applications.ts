@@ -55,4 +55,11 @@ export class RecruiterApplicationsComponent implements OnInit {
   get pending(): number {
     return this.applications.filter(a => a.status === 'APPLIED').length;
   }
+
+  getStatusLabel(status: string): string {
+    if (status === 'ACCEPTED') return 'OFFER SENT';
+    if (status === 'OFFER_ACCEPTED') return 'ACCEPTED';
+    if (status === 'OFFER_REJECTED') return 'REJECTED BY CANDIDATE';
+    return status;
+  }
 }

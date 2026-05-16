@@ -17,6 +17,8 @@ import { ToastService } from '../../../../core/services/toast.service';
 })
 export class ScheduleInterviewComponent implements OnInit {
   applicationId!: number;
+  interviewId?: number;
+  isEditMode = false;
   isLoading = false;
   errorMessage = '';
 
@@ -29,6 +31,7 @@ export class ScheduleInterviewComponent implements OnInit {
     scheduledAt: '',
     durationMinutes: 30,
     modeDetails: '',
+    meetingLink: '',
     notes: ''
   };
 
@@ -40,39 +43,83 @@ export class ScheduleInterviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.applicationId = Number(this.route.snapshot.paramMap.get('applicationId'));
-    this.formData.applicationId = this.applicationId;
-    this.formData.title = 'Interview Round';
+    const idParam = this.route.snapshot.paramMap.get('interviewId');
+    const appParam = this.route.snapshot.paramMap.get('applicationId');
+
+    if (idParam) {
+      this.isEditMode = true;
+      this.interviewId = Number(idParam);
+      this.loadInterviewDetails();
+    } else if (appParam) {
+      this.applicationId = Number(appParam);
+      this.formData.applicationId = this.applicationId;
+      this.formData.title = 'Interview Round';
+    }
+  }
+
+  loadInterviewDetails(): void {
+    if (!this.interviewId) return;
+    this.isLoading = true;
+    this.interviewService.getInterviewDetails(this.interviewId).subscribe({
+      next: (data) => {
+        this.isLoading = false;
+        this.applicationId = data.applicationId;
+        // Map response to request format
+        this.formData = {
+          applicationId: data.applicationId,
+          title: data.title || 'Interview Round',
+          interviewType: data.interviewType,
+          scheduledAt: data.scheduledAt ? data.scheduledAt.substring(0, 16) : '', // Format for datetime-local
+          durationMinutes: data.durationMinutes,
+          modeDetails: data.modeDetails || '',
+          meetingLink: data.meetingLink || '',
+          notes: data.notes || ''
+        };
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toastService.show('Failed to load interview details', 'error');
+        this.router.navigate(['/recruiter/interviews']);
+      }
+    });
   }
 
   onSubmit(form: NgForm): void {
     this.errorMessage = '';
 
     if (form.invalid) {
-      // [Disha Gujar] : Form validation fallback logic
-      this.toastService.show('Please fill all required fields correctly','error');
-      return;
-    }
-
-    if (!this.formData.scheduledAt) {
-      // [Disha Gujar] : Date selection validation fallback logic
-      this.toastService.show('Please choose interview date and time','error');
+      this.toastService.show('Please fill all required fields correctly', 'error');
       return;
     }
 
     this.isLoading = true;
 
-    this.interviewService.scheduleInterview(this.formData).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.toastService.show('Interview scheduled successfully', 'success');
-        this.router.navigate(['/recruiter/interviews']);
-      },
-      error: (error) => {
-        this.errorMessage = error?.error?.message || 'Failed to schedule interview';
-        this.isLoading = false;
-        this.toastService.show(this.errorMessage, 'error');
-      }
-    });
+    if (this.isEditMode && this.interviewId) {
+      this.interviewService.updateInterview(this.interviewId, this.formData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.toastService.show('Interview updated successfully', 'success');
+          this.router.navigate(['/recruiter/interviews']);
+        },
+        error: (error) => {
+          this.errorMessage = error?.error?.message || 'Failed to update interview';
+          this.isLoading = false;
+          this.toastService.show(this.errorMessage, 'error');
+        }
+      });
+    } else {
+      this.interviewService.scheduleInterview(this.formData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.toastService.show('Interview scheduled successfully', 'success');
+          this.router.navigate(['/recruiter/interviews']);
+        },
+        error: (error) => {
+          this.errorMessage = error?.error?.message || 'Failed to schedule interview';
+          this.isLoading = false;
+          this.toastService.show(this.errorMessage, 'error');
+        }
+      });
+    }
   }
 }

@@ -1,0 +1,249 @@
+<!-- ═══════════════════════════════════════════════════
+     HireConnect — Recruiter: View Candidate Profile
+     Matches the same design as the recruiter profile page
+════════════════════════════════════════════════════ -->
+<div class="candidate-page">
+
+  <!-- ── Page Header ─────────────────────────────── -->
+  <section class="page-header">
+    <div>
+      <a [routerLink]="['/recruiter/jobs', jobId, 'applications']" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Applications
+      </a>
+      <h1>Candidate Profile</h1>
+      <p class="page-subtitle">Full candidate details, resume, and professional background.</p>
+    </div>
+  </section>
+
+  <!-- ── Loading ─────────────────────────────────── -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="hc-spinner" style="width:32px;height:32px;border-width:3px;"></div>
+    <p>Loading candidate profile...</p>
+  </div>
+
+  <!-- ── Profile Content ─────────────────────────── -->
+  <ng-container *ngIf="!isLoading && profile">
+
+    <!-- Identity Card (same gradient banner as recruiter profile) -->
+    <section class="identity-card">
+      <div class="identity-avatar">{{ initials }}</div>
+      <div class="identity-info">
+        <h2 class="identity-name">{{ fullName }}</h2>
+        <p class="identity-headline" *ngIf="profile.headline">{{ profile.headline }}</p>
+        <div class="identity-meta">
+          <span *ngIf="profile.location">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            {{ profile.location }}
+          </span>
+          <span *ngIf="profile.email">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            {{ profile.email }}
+          </span>
+          <span *ngIf="profile.phone">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1.28h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.29 6.29l.95-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            {{ profile.phone }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Strip -->
+    <section class="stats-strip">
+      <div class="stat-card">
+        <div class="stat-icon stat-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </div>
+        <div>
+          <span class="stat-label">Experience</span>
+          <strong class="stat-number">{{ profile.totalExperienceYears ?? '—' }}<span class="stat-unit" *ngIf="profile.totalExperienceYears"> yrs</span></strong>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-orange">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <span class="stat-label">Notice Period</span>
+          <strong class="stat-number">{{ profile.noticePeriodDays === 0 ? 'Immediate' : (profile.noticePeriodDays != null ? profile.noticePeriodDays + ' days' : '—') }}</strong>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>
+          <span class="stat-label">Expected CTC</span>
+          <strong class="stat-number">{{ formatSalary(profile.expectedSalary) }}</strong>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-purple">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>
+        </div>
+        <div>
+          <span class="stat-label">Work Mode</span>
+          <strong class="stat-number">{{ profile.preferredWorkMode ?? '—' }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hiring Pipeline -->
+    <section class="section-card" *ngIf="!isLoading">
+      <div class="section-card-header pipeline-header">
+        <h3 class="section-card-title">Hiring Pipeline</h3>
+        <div class="header-actions">
+          <a
+            class="btn-primary-sm"
+            *ngIf="application?.id"
+            [routerLink]="['/recruiter/interviews/schedule', application.id]"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Schedule Interview
+          </a>
+          <button
+            class="btn-outline-sm"
+            *ngIf="isOfferAccepted"
+            (click)="downloadOfferLetter()"
+            [disabled]="isDownloadingOffer"
+          >
+            {{ isDownloadingOffer ? 'Preparing...' : 'Download Offer Letter (PDF)' }}
+          </button>
+        </div>
+      </div>
+
+      <ng-container *ngIf="application; else noAppFound">
+        <div class="pipeline-track">
+          <div
+            class="pipeline-step"
+            *ngFor="let step of pipelineSteps; let i = index"
+            [class.completed]="i < pipelineCurrentIndex"
+            [class.current]="i === pipelineCurrentIndex"
+            [class.upcoming]="i > pipelineCurrentIndex"
+          >
+            <div class="pipeline-left">
+              <div class="pipeline-marker">
+                <span class="pipeline-icon" *ngIf="i < pipelineCurrentIndex">✓</span>
+                <span class="pipeline-icon" *ngIf="i === pipelineCurrentIndex">•</span>
+                <span class="pipeline-icon" *ngIf="i > pipelineCurrentIndex">○</span>
+              </div>
+              <div class="pipeline-connector" *ngIf="i !== pipelineSteps.length - 1"></div>
+            </div>
+
+            <div class="pipeline-content">
+              <div class="pipeline-title">
+                {{ step.title }}
+              </div>
+              <div class="pipeline-sub">
+                <ng-container *ngIf="i === 0 && application?.appliedAt">
+                  Applied {{ application?.appliedAt | date:'mediumDate' }}
+                </ng-container>
+                <ng-container *ngIf="i !== 0 && i !== 3">
+                  <span *ngIf="i < pipelineCurrentIndex">Completed</span>
+                  <span *ngIf="i === pipelineCurrentIndex">In progress</span>
+                  <span *ngIf="i > pipelineCurrentIndex">Pending</span>
+                </ng-container>
+                <ng-container *ngIf="i === 3">
+                  {{ pipelineFinalDecisionTitle }}
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noAppFound>
+        <p class="body-text">No application found for this candidate in this job.</p>
+      </ng-template>
+    </section>
+
+    <!-- Resume Section -->
+    <div class="section-card" *ngIf="profile.resume">
+      <div class="section-card-header">
+        <h3 class="section-card-title">Resume</h3>
+        <div class="resume-actions">
+          <button class="btn-outline-sm" (click)="viewResume()" [disabled]="isViewingResume">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            {{ isViewingResume ? 'Opening...' : 'View Resume' }}
+          </button>
+          <button class="btn-primary-sm" (click)="downloadResume()" [disabled]="isDownloadingResume">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            {{ isDownloadingResume ? 'Downloading...' : 'Download' }}
+          </button>
+        </div>
+      </div>
+      <div class="resume-file-row">
+        <div class="resume-file-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div>
+          <p class="resume-filename">{{ profile.resume.fileName }}</p>
+          <p class="resume-date">Uploaded {{ profile.resume.uploadedAt | date:'mediumDate' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Professional Summary -->
+    <div class="section-card" *ngIf="profile.about">
+      <div class="section-card-header">
+        <h3 class="section-card-title">Professional Summary</h3>
+      </div>
+      <p class="body-text">{{ profile.about }}</p>
+    </div>
+
+    <!-- Key Skills -->
+    <div class="section-card" *ngIf="profile.skills?.length">
+      <div class="section-card-header">
+        <h3 class="section-card-title">Key Skills</h3>
+      </div>
+      <div class="skills-wrap">
+        <span class="skill-chip" *ngFor="let skill of profile.skills">
+          {{ skill.name }}<span class="skill-chip-level" *ngIf="skill.level"> · {{ skill.level }}</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Work Experience -->
+    <div class="section-card" *ngIf="profile.experiences?.length">
+      <div class="section-card-header">
+        <h3 class="section-card-title">Work Experience</h3>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item" *ngFor="let exp of profile.experiences">
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <p class="timeline-title">{{ exp.jobTitle }}</p>
+            <p class="timeline-sub">{{ exp.companyName }}</p>
+            <p class="timeline-date" *ngIf="exp.startDate">
+              {{ exp.startDate | date:'MMM yyyy' }} – {{ exp.currentlyWorking ? 'Present' : (exp.endDate | date:'MMM yyyy') }}
+            </p>
+            <p class="body-text mt-8" *ngIf="exp.description">{{ exp.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="section-card" *ngIf="profile.educations?.length">
+      <div class="section-card-header">
+        <h3 class="section-card-title">Education</h3>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item" *ngFor="let edu of profile.educations">
+          <div class="timeline-dot edu-dot"></div>
+          <div class="timeline-body">
+            <p class="timeline-title">{{ edu.degree }} <span *ngIf="edu.fieldOfStudy">in {{ edu.fieldOfStudy }}</span></p>
+            <p class="timeline-sub">{{ edu.institution }}</p>
+            <p class="timeline-date" *ngIf="edu.startDate">
+              {{ edu.startDate | date:'yyyy' }} – {{ edu.currentlyStudying ? 'Present' : (edu.endDate | date:'yyyy') }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

@@ -80,6 +80,50 @@
     </div>
   </section>
 
+  <!-- ── Jobs For You (Smart Features) ──────────────── -->
+  <section class="recommended-section" *ngIf="recommendedJobs.length > 0">
+    <div class="section-header">
+      <h2 class="section-title">Jobs For You</h2>
+      <a routerLink="/candidate/recommended-jobs" class="view-all-link">View All Matches →</a>
+    </div>
+    
+    <div class="recommended-grid">
+      <div class="job-card" *ngFor="let rec of recommendedJobs" [routerLink]="['/jobs', rec.job.jobId]">
+        <div class="job-card-header">
+          <div>
+            <h3>{{ rec.job.title }}</h3>
+            <p class="company">{{ rec.job.companyName }} • {{ rec.job.location }}</p>
+          </div>
+          <div class="match-badge" [ngClass]="getMatchBadgeClass(rec.matchScore)">
+            {{ rec.matchScore }}% Match
+          </div>
+        </div>
+        
+        <div class="job-skills">
+          <span class="skill-chip matched" *ngFor="let skill of rec.matchedSkills | slice:0:3">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ skill }}
+          </span>
+          <span class="skill-chip more" *ngIf="rec.matchedSkills.length > 3">
+            +{{ rec.matchedSkills.length - 3 }} more
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="recommended-section empty-state" *ngIf="!isLoading && recommendedJobs.length === 0 && profileExists">
+    <div class="section-header">
+      <h2 class="section-title">Jobs For You</h2>
+    </div>
+    <div class="empty-card">
+      <div class="empty-icon">🎯</div>
+      <h3>Discover Your Perfect Match</h3>
+      <p>Add skills to your profile or upload your resume to see personalized job recommendations.</p>
+      <a routerLink="/profile" class="btn-primary mt-3">Update Profile</a>
+    </div>
+  </section>
+
   <!-- ── Tips Section ──────────────────────────────── -->
   <section class="tips-section">
     <div class="tip-card">

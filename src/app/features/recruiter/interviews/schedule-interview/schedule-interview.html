@@ -2,9 +2,9 @@
   <section class="page-header">
     <div>
       <p class="page-label">Recruiter workspace</p>
-      <h1>Schedule Interview</h1>
+      <h1>{{ isEditMode ? 'Update' : 'Schedule' }} Interview</h1>
       <p class="page-subtitle">
-        Set up an interview for shortlisted candidate application #{{ applicationId }}.
+        {{ isEditMode ? 'Modify details for application #' + applicationId : 'Set up an interview for shortlisted candidate application #' + applicationId }}.
       </p>
     </div>
 
@@ -56,12 +56,20 @@
         </div>
 
         <div class="form-group">
-          <label>Mode Details</label>
+          <label>Location / Instructions</label>
           <input
             [(ngModel)]="formData.modeDetails"
             name="modeDetails"
-            required
-            placeholder="Google Meet link / office address / phone instructions"
+            placeholder="Office address or phone instructions"
+          />
+        </div>
+
+        <div class="form-group" *ngIf="formData.interviewType === 'ONLINE'">
+          <label>Meeting Link (URL)</label>
+          <input
+            [(ngModel)]="formData.meetingLink"
+            name="meetingLink"
+            placeholder="https://meet.google.com/..."
           />
         </div>
 
@@ -78,7 +86,7 @@
       <div class="form-actions">
         <a routerLink="/recruiter/interviews" class="secondary-btn">Cancel</a>
         <button type="submit" class="primary-btn" [disabled]="isLoading">
-          {{ isLoading ? 'Scheduling...' : 'Schedule Interview' }}
+          {{ isLoading ? (isEditMode ? 'Updating...' : 'Scheduling...') : (isEditMode ? 'Update Interview' : 'Schedule Interview') }}
         </button>
       </div>
     </form>

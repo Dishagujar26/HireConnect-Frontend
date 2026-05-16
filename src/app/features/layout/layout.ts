@@ -20,6 +20,7 @@ import { ToastService } from '../../core/services/toast.service';
 export class LayoutComponent implements OnInit {
   userRole = '';
   userEmail = '';
+  isAdminUser = false;
   isNotificationPanelOpen = false;
 
   notifications: NotificationResponse[] = [];
@@ -35,6 +36,7 @@ export class LayoutComponent implements OnInit {
   ngOnInit(): void {
     this.userRole = this.authStorage.getUserRole() || '';
     this.userEmail = this.authStorage.getUserEmail() || '';
+    this.isAdminUser = this.userRole === 'ADMIN';
 
     this.loadNotifications();
   }
@@ -44,6 +46,7 @@ export class LayoutComponent implements OnInit {
   }
 
   get homeRoute(): string {
+    if (this.userRole === 'ADMIN') return '/admin/dashboard';
     return this.userRole === 'RECRUITER'
       ? '/recruiter/dashboard'
       : '/candidate/dashboard';

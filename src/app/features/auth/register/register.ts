@@ -14,6 +14,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class RegisterComponent {
   email = '';
   password = '';
+  showPassword = false;
   role = 'CANDIDATE';
   isLoading = false;
 

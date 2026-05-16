@@ -12,7 +12,8 @@ import { ToastService } from '../../../../core/services/toast.service';
 })
 export class CandidateInterviewsComponent implements OnInit {
   interviews: InterviewResponse[] = [];
-  visibleInterviews: InterviewResponse[] = [];
+  scheduledInterviews: InterviewResponse[] = [];
+  completedInterviews: InterviewResponse[] = [];
   isLoading = false;
 
   constructor(
@@ -30,8 +31,11 @@ export class CandidateInterviewsComponent implements OnInit {
     this.interviewService.getCandidateInterviews().subscribe({
       next: (response) => {
         this.interviews = response || [];
-        this.visibleInterviews = this.interviews.filter(
+        this.scheduledInterviews = this.interviews.filter(
           interview => interview.status === 'SCHEDULED' || interview.status === 'CANCELLED'
+        );
+        this.completedInterviews = this.interviews.filter(
+          interview => interview.status === 'COMPLETED'
         );
         this.isLoading = false;
       },
@@ -40,22 +44,6 @@ export class CandidateInterviewsComponent implements OnInit {
         this.toastService.show('Failed to load interviews', 'error');
       }
     });
-  }
-
-  get totalCount(): number {
-    return this.visibleInterviews.length;
-  }
-
-  get scheduledCount(): number {
-    return this.visibleInterviews.filter(interview => interview.status === 'SCHEDULED').length;
-  }
-
-  get cancelledCount(): number {
-    return this.visibleInterviews.filter(interview => interview.status === 'CANCELLED').length;
-  }
-
-  get onlineCount(): number {
-    return this.visibleInterviews.filter(interview => interview.interviewType === 'ONLINE').length;
   }
 
   formatType(type: string): string {

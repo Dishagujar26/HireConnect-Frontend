@@ -1,0 +1,68 @@
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>Complete Interview & Feedback</h2>
+      <button class="close-btn" (click)="close()">✕</button>
+    </header>
+
+    <div class="modal-body">
+      <p class="subtitle">Evaluate <strong>{{ candidateName }}</strong> and decide the next steps.</p>
+
+      <div class="form-section">
+        <label>Technical Score (1-5)</label>
+        <div class="rating-stars">
+          <button type="button" *ngFor="let s of [1,2,3,4,5]" (click)="technicalScore = s" [class.active]="technicalScore >= s">★</button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <label>Communication Score (1-5)</label>
+        <div class="rating-stars">
+          <button type="button" *ngFor="let s of [1,2,3,4,5]" (click)="communicationScore = s" [class.active]="communicationScore >= s">★</button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <label for="feedback">Detailed Feedback</label>
+        <textarea 
+          id="feedback" 
+          [(ngModel)]="feedback" 
+          placeholder="What are the key strengths and weaknesses?"
+          rows="4"
+        ></textarea>
+      </div>
+
+      <div class="form-section">
+        <label>Selection Decision</label>
+        <div class="minimal-options">
+          <label class="option-item" [class.selected]="selectionAction === 'HIRE'">
+            <input type="radio" name="action" [(ngModel)]="selectionAction" value="HIRE">
+            <span>Hire / Offer</span>
+          </label>
+
+          <label class="option-item" [class.selected]="selectionAction === 'NEXT_ROUND'">
+            <input type="radio" name="action" [(ngModel)]="selectionAction" value="NEXT_ROUND">
+            <span>Next Round</span>
+          </label>
+
+          <label class="option-item" [class.selected]="selectionAction === 'REJECT'">
+            <input type="radio" name="action" [(ngModel)]="selectionAction" value="REJECT">
+            <span>Reject</span>
+          </label>
+
+          <label class="option-item" [class.selected]="selectionAction === 'NO_ACTION'">
+            <input type="radio" name="action" [(ngModel)]="selectionAction" value="NO_ACTION">
+            <span>Just Complete</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal-footer">
+      <button class="btn-secondary" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+      <button class="btn-primary" (click)="submit()" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Submit Feedback & Complete' }}
+      </button>
+    </footer>
+  </div>
+</div>

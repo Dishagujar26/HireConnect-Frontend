@@ -9,39 +9,38 @@
     </div>
   </section>
 
-  <section class="summary-row">
-    <div class="summary-card">
-      <span>Total Interviews</span>
-      <strong>{{ totalCount }}</strong>
-    </div>
-
-    <div class="summary-card">
-      <span>Scheduled</span>
-      <strong>{{ scheduledCount }}</strong>
-    </div>
-
-    <div class="summary-card">
-      <span>Cancelled</span>
-      <strong>{{ cancelledCount }}</strong>
-    </div>
-
-    <div class="summary-card">
-      <span>Online</span>
-      <strong>{{ onlineCount }}</strong>
-    </div>
-  </section>
-
   <div class="loading-state" *ngIf="isLoading">
     Loading interviews...
   </div>
 
-  <div class="empty-state" *ngIf="!isLoading && visibleInterviews.length === 0">
+  <div class="empty-state" *ngIf="!isLoading && scheduledInterviews.length === 0 && completedInterviews.length === 0">
     <h3>No interviews available</h3>
     <p>Your scheduled interviews will appear here once recruiters set them up.</p>
   </div>
 
-  <div class="interviews-list" *ngIf="!isLoading && visibleInterviews.length > 0">
-    <article class="interview-card" *ngFor="let interview of visibleInterviews">
+  <div class="interview-sections" *ngIf="!isLoading && (scheduledInterviews.length > 0 || completedInterviews.length > 0)">
+    
+    <!-- Scheduled Interviews -->
+    <div class="interview-group" *ngIf="scheduledInterviews.length > 0">
+      <h2 class="group-title">Scheduled Interviews</h2>
+      <div class="interviews-list">
+        <ng-container *ngTemplateOutlet="interviewList; context: { $implicit: scheduledInterviews }"></ng-container>
+      </div>
+    </div>
+
+    <!-- Completed Interviews -->
+    <div class="interview-group" *ngIf="completedInterviews.length > 0">
+      <h2 class="group-title">Completed Interviews</h2>
+      <div class="interviews-list">
+        <ng-container *ngTemplateOutlet="interviewList; context: { $implicit: completedInterviews }"></ng-container>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Reusable Card Template -->
+  <ng-template #interviewList let-interviews>
+    <article class="interview-card" *ngFor="let interview of interviews">
       <div class="interview-main">
         <div class="interview-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -60,6 +59,7 @@
               class="status-badge"
               [class.scheduled]="interview.status === 'SCHEDULED'"
               [class.cancelled]="interview.status === 'CANCELLED'"
+              [class.completed]="interview.status === 'COMPLETED'"
             >
               {{ interview.status }}
             </span>
@@ -97,11 +97,22 @@
             <span class="interview-location">{{ interview.modeDetails }}</span>
           </div>
 
-          <p class="notes" *ngIf="interview.notes">
-            {{ interview.notes }}
-          </p>
+          <div class="notes-container" *ngIf="interview.notes">
+            <p class="notes-title">Interview Note:</p>
+            <p class="notes-full">{{ interview.notes }}</p>
+          </div>
+
+          <div class="feedback-section" *ngIf="interview.status === 'COMPLETED' && interview.feedback">
+            <div class="feedback-header">Feedback from Interviewer</div>
+            <p class="feedback-content">{{ interview.feedback }}</p>
+            <div class="candidate-scores" *ngIf="interview.technicalScore">
+              <span class="score-tag">Technical: {{ interview.technicalScore }}/5</span>
+              <span class="score-tag">Communication: {{ interview.communicationScore }}/5</span>
+            </div>
+          </div>
         </div>
       </div>
     </article>
-  </div>
+  </ng-template>
 </div>
+>

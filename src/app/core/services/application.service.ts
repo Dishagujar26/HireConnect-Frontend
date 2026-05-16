@@ -22,7 +22,7 @@ export interface RecruiterJobApplicationResponse {
 }
 
 export interface CandidateApplicationResponse {
-  applicationId: number;
+  id: number;
   jobId: number;
   candidateId?: number;
   status: string;
@@ -61,5 +61,12 @@ export class ApplicationService {
       { status },
       { responseType: 'json' }
     );
+  }
+
+  downloadOfferLetterPdf(candidateId: number, jobId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/offer-letter/pdf`, {
+      params: { candidateId, jobId },
+      responseType: 'blob'
+    });
   }
 }

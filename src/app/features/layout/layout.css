@@ -89,6 +89,12 @@
   letter-spacing: 0.02em;
 }
 
+.role-chip.admin-chip {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
 /* ── Navigation ──────────────────────────────── */
 .sidebar-nav {
   flex: 1;
@@ -160,7 +166,7 @@
 
 /* ── Sidebar CTA ─────────────────────────────── */
 .sidebar-cta {
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
@@ -179,6 +185,11 @@
   font-weight: 600;
   text-decoration: none;
   transition: background 0.15s ease;
+}
+
+.sidebar-cta-btn.admin-cta {
+  background: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .sidebar-cta-btn:hover {

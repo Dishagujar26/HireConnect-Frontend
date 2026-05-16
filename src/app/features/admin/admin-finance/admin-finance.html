@@ -1,0 +1,67 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Financial Overview</h1>
+      <p class="page-subtitle">Monitor platform revenue and job promotion transactions</p>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading financial data...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <!-- Stats Cards -->
+    <div class="stats-grid finance-stats">
+      <div class="stat-card green">
+        <div class="stat-icon">💰</div>
+        <div class="stat-body">
+          <div class="stat-value">₹{{ stats?.totalRevenue?.toLocaleString() ?? '0' }}</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">✅</div>
+        <div class="stat-body">
+          <div class="stat-value">{{ stats?.successCount ?? '0' }}</div>
+          <div class="stat-label">Successful Payments</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transaction Table -->
+    <h2 class="section-title" style="margin-top: 32px;">Recent Transactions</h2>
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Trans ID</th>
+            <th>Email</th>
+            <th>Purpose</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tx of transactions">
+            <td class="muted">#{{ tx.id }}</td>
+            <td class="email-cell">{{ tx.email }}</td>
+            <td><span class="type-badge">{{ tx.purpose }}</span></td>
+            <td class="bold-cell">₹{{ tx.amount }}</td>
+            <td>
+              <span [class]="getStatusClass(tx.status)">
+                {{ tx.status }}
+              </span>
+            </td>
+            <td class="muted">{{ tx.createdAt | date:'short' }}</td>
+          </tr>
+          <tr *ngIf="transactions.length === 0">
+            <td colspan="6" class="empty-row">No transactions found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

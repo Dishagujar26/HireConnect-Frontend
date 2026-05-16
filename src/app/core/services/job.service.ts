@@ -130,4 +130,19 @@ export class JobService {
       coverLetter: ''
     });
   }
+
+  // [Smart Features] : Get Recommended Jobs based on candidate skills
+  getRecommendedJobs(skills: string[], limit: number = 6): Observable<any[]> {
+    let params = new HttpParams().set('skills', skills.join(',')).set('limit', limit.toString());
+    return this.http.get<any[]>(`${this.jobsBaseUrl}/recommended`, { params });
+  }
+
+  // [Smart Features] : Get match score for a specific job against candidate skills
+  getJobMatchScore(jobId: number, skills: string[]): Observable<{ score: number, matchedSkills: string[], missingSkills: string[] }> {
+    let params = new HttpParams().set('skills', skills.join(','));
+    return this.http.get<{ score: number, matchedSkills: string[], missingSkills: string[] }>(
+      `${this.jobsBaseUrl}/${jobId}/match-score`,
+      { params }
+    );
+  }
 }

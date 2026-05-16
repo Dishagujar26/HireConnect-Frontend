@@ -1,0 +1,48 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Job Moderation</h1>
+      <p class="page-subtitle">Review and remove policy-violating job listings</p>
+    </div>
+    <div class="header-count" *ngIf="!isLoading">
+      {{ jobs.length }} total jobs
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading jobs...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Job ID</th>
+          <th>Title</th>
+          <th>Company</th>
+          <th>Location</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let job of jobs">
+          <td class="muted">#{{ job.jobId }}</td>
+          <td class="bold-cell">{{ job.title }}</td>
+          <td>{{ job.companyName }}</td>
+          <td>{{ job.location }}</td>
+          <td><span class="type-badge">{{ job.jobType }}</span></td>
+          <td><span class="status-badge active">{{ job.status }}</span></td>
+          <td>
+            <button class="btn-danger-sm" (click)="deleteJob(job)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="jobs.length === 0">
+          <td colspan="7" class="empty-row">No jobs found on the platform.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

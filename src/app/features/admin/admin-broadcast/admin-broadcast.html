@@ -1,0 +1,71 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Broadcast Message</h1>
+      <p class="page-subtitle">Send a platform-wide announcement to all users</p>
+    </div>
+  </div>
+
+  <!-- Result Banner -->
+  <div class="success-banner" *ngIf="lastResult">
+    ✅ Broadcast "<strong>{{ lastResult.title }}</strong>" sent to <strong>{{ lastResult.recipientCount }}</strong> users successfully!
+  </div>
+
+  <div class="broadcast-layout">
+    <!-- Compose Form -->
+    <div class="compose-card">
+      <h2 class="card-title">Compose Broadcast</h2>
+
+      <div class="form-group">
+        <label>Target Audience</label>
+        <div class="audience-tabs">
+          <button class="audience-tab" [class.active]="targetRole === 'ALL'" (click)="targetRole = 'ALL'">
+            📣 Everyone
+          </button>
+          <button class="audience-tab" [class.active]="targetRole === 'CANDIDATE'" (click)="targetRole = 'CANDIDATE'">
+            🎓 Candidates Only
+          </button>
+          <button class="audience-tab" [class.active]="targetRole === 'RECRUITER'" (click)="targetRole = 'RECRUITER'">
+            🏢 Recruiters Only
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="broadcast-title">Notification Title</label>
+        <input id="broadcast-title" class="form-input" type="text" [(ngModel)]="title" placeholder="e.g. Scheduled Maintenance Tonight" maxlength="100" />
+      </div>
+
+      <div class="form-group">
+        <label for="broadcast-message">Message</label>
+        <textarea id="broadcast-message" class="form-textarea" [(ngModel)]="message" rows="5" placeholder="Type your announcement here..." maxlength="1000"></textarea>
+        <div class="char-count">{{ message.length }}/1000</div>
+      </div>
+
+      <div class="preview-row">
+        <div class="preview-chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          {{ isLoadingUsers ? 'Loading...' : recipientPreview + ' active recipients' }}
+        </div>
+      </div>
+
+      <button class="btn-broadcast" (click)="send()" [disabled]="isSending || isLoadingUsers">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        {{ isSending ? 'Sending...' : 'Send Broadcast' }}
+      </button>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="preview-card">
+      <h2 class="card-title">Preview</h2>
+      <div class="notif-preview">
+        <div class="notif-preview-icon">📢</div>
+        <div>
+          <div class="notif-preview-title">{{ title || 'Your notification title' }}</div>
+          <div class="notif-preview-msg">{{ message || 'Your message will appear here...' }}</div>
+        </div>
+      </div>
+      <p class="preview-note">This is how the notification will appear in each user's notification panel.</p>
+    </div>
+  </div>
+</div>

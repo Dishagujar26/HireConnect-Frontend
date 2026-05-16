@@ -274,11 +274,19 @@
   right: 10px;
   border: none;
   background: transparent;
-  color: var(--primary);
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--text-muted);
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+  border-radius: 50%;
+}
+
+.input-toggle:hover {
+  color: var(--primary);
+  background: rgba(39, 93, 245, 0.05);
 }
 
 /* ── Buttons ─────────────────────────────────── */

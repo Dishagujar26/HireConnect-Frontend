@@ -18,7 +18,9 @@
 
     <!-- Role Chip -->
     <div class="role-chip-wrap">
-      <span class="role-chip">{{ userRole === 'RECRUITER' ? '🧑‍💼 Recruiter' : '👤 Candidate' }}</span>
+      <span class="role-chip" [class.admin-chip]="userRole === 'ADMIN'">
+        {{ userRole === 'ADMIN' ? '🛡️ Super Admin' : (userRole === 'RECRUITER' ? '🧑‍💼 Recruiter' : '👤 Candidate') }}
+      </span>
     </div>
 
     <!-- Navigation -->
@@ -38,6 +40,12 @@
             <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
           </svg>
           <span>Browse Jobs</span>
+        </a>
+        <a routerLink="/candidate/recommended-jobs" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span>Jobs For You</span>
         </a>
         <a routerLink="/candidate/applications" routerLinkActive="active-link" class="nav-item">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -105,6 +113,41 @@
           <span>Billing</span>
         </a>
       </ng-container>
+
+      <!-- ADMIN nav -->
+      <ng-container *ngIf="userRole === 'ADMIN'">
+        <a routerLink="/admin/dashboard" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Admin Dashboard</span>
+        </a>
+        <a routerLink="/admin/users" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          </svg>
+          <span>User Governance</span>
+        </a>
+        <a routerLink="/admin/jobs" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          </svg>
+          <span>Job Moderation</span>
+        </a>
+        <a routerLink="/admin/broadcast" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+          </svg>
+          <span>Broadcasting</span>
+        </a>
+        <a routerLink="/admin/finance" routerLinkActive="active-link" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <span>Financial Overview</span>
+        </a>
+      </ng-container>
     </nav>
 
     <!-- Bottom CTA -->
@@ -120,6 +163,12 @@
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         Find Jobs
+      </a>
+      <a *ngIf="userRole === 'ADMIN'" routerLink="/admin/broadcast" class="sidebar-cta-btn admin-cta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
+        </svg>
+        Send Broadcast
       </a>
     </div>
 
@@ -159,7 +208,7 @@
         <a routerLink="/profile" class="topbar-profile">
           <span class="topbar-avatar">{{ userInitial }}</span>
           <span class="topbar-user-info">
-            <strong>{{ userRole === 'RECRUITER' ? 'Recruiter Account' : 'Candidate Account' }}</strong>
+            <strong>{{ userRole === 'ADMIN' ? 'Platform Administrator' : (userRole === 'RECRUITER' ? 'Recruiter Account' : 'Candidate Account') }}</strong>
             <small>{{ userEmail }}</small>
           </span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

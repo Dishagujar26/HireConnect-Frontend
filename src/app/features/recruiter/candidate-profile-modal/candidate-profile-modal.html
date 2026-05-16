@@ -1,0 +1,224 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Candidate Profile">
+
+    <!-- Loading State -->
+    <div class="modal-loading" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading candidate profile...</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading && profile">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <button class="modal-close" (click)="close()" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+
+        <!-- Hero Section -->
+        <div class="candidate-hero">
+          <div class="candidate-avatar" *ngIf="!profile.profilePictureUrl">{{ initials }}</div>
+          <img *ngIf="profile.profilePictureUrl" [src]="profile.profilePictureUrl"
+               class="candidate-photo" [alt]="fullName" />
+
+          <div class="candidate-hero-info">
+            <h2 class="candidate-name">{{ fullName }}</h2>
+            <p class="candidate-headline" *ngIf="profile.headline">{{ profile.headline }}</p>
+            <div class="candidate-meta">
+              <span *ngIf="profile.location">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/>
+                </svg>
+                {{ profile.location }}
+              </span>
+              <span *ngIf="profile.phone">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.24 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.08 6.08l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                {{ profile.phone }}
+              </span>
+              <span *ngIf="profile.nationality">{{ profile.nationality }}</span>
+            </div>
+
+            <!-- Availability Badges -->
+            <div class="availability-badges">
+              <span class="badge badge-green" *ngIf="profile.noticePeriodDays === 0">Immediate Joiner</span>
+              <span class="badge badge-blue" *ngIf="profile.noticePeriodDays > 0">
+                {{ formatNoticePeriod(profile.noticePeriodDays) }} notice
+              </span>
+              <span class="badge badge-purple" *ngIf="profile.preferredWorkMode">{{ profile.preferredWorkMode }}</span>
+              <span class="badge badge-orange" *ngIf="profile.totalExperienceYears">
+                {{ profile.totalExperienceYears }}yr exp
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+
+        <!-- Salary Info -->
+        <div class="info-row-group" *ngIf="profile.expectedSalary || profile.currentSalary">
+          <div class="info-chip" *ngIf="profile.expectedSalary">
+            <span class="chip-label">Expected</span>
+            <span class="chip-value">{{ formatSalary(profile.expectedSalary) }}</span>
+          </div>
+          <div class="info-chip" *ngIf="profile.currentSalary">
+            <span class="chip-label">Current</span>
+            <span class="chip-value">{{ formatSalary(profile.currentSalary) }}</span>
+          </div>
+        </div>
+
+        <!-- About -->
+        <section class="modal-section" *ngIf="profile.about">
+          <h4 class="section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>
+            </svg>
+            About
+          </h4>
+          <p class="about-text">{{ profile.about }}</p>
+        </section>
+
+        <!-- Skills -->
+        <section class="modal-section" *ngIf="profile.skills?.length">
+          <h4 class="section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+            Skills
+          </h4>
+          <div class="skills-cloud">
+            <span class="skill-tag" *ngFor="let skill of profile.skills">
+              {{ skill.name }}
+              <span class="skill-level" *ngIf="skill.level">· {{ skill.level }}</span>
+            </span>
+          </div>
+        </section>
+
+        <!-- Experience -->
+        <section class="modal-section" *ngIf="profile.experiences?.length">
+          <h4 class="section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+            Experience
+          </h4>
+          <div class="timeline">
+            <div class="timeline-item" *ngFor="let exp of profile.experiences">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-title">{{ exp.jobTitle }}</div>
+                <div class="timeline-sub">
+                  {{ exp.companyName }}
+                  <span *ngIf="exp.employmentType"> · {{ exp.employmentType }}</span>
+                  <span *ngIf="exp.industry"> · {{ exp.industry }}</span>
+                </div>
+                <div class="timeline-dates" *ngIf="exp.startDate">
+                  {{ exp.startDate | date:'MMM yyyy' }} –
+                  {{ exp.currentlyWorking ? 'Present' : (exp.endDate | date:'MMM yyyy') }}
+                  <span *ngIf="exp.location"> · {{ exp.location }}</span>
+                </div>
+                <p class="timeline-desc" *ngIf="exp.description">{{ exp.description }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Education -->
+        <section class="modal-section" *ngIf="profile.educations?.length">
+          <h4 class="section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+            Education
+          </h4>
+          <div class="timeline">
+            <div class="timeline-item" *ngFor="let edu of profile.educations">
+              <div class="timeline-dot edu"></div>
+              <div class="timeline-content">
+                <div class="timeline-title">{{ edu.degree }}<span *ngIf="edu.fieldOfStudy"> in {{ edu.fieldOfStudy }}</span></div>
+                <div class="timeline-sub">{{ edu.institution }}</div>
+                <div class="timeline-dates" *ngIf="edu.startDate">
+                  {{ edu.startDate | date:'yyyy' }} –
+                  {{ edu.currentlyStudying ? 'Present' : (edu.endDate | date:'yyyy') }}
+                  <span *ngIf="edu.grade"> · Grade: {{ edu.grade }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Social Links -->
+        <section class="modal-section" *ngIf="profile.socialLinks?.length">
+          <h4 class="section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            Social Links
+          </h4>
+          <div class="social-links-row">
+            <a *ngFor="let link of profile.socialLinks"
+               [href]="link.url" target="_blank" rel="noopener"
+               class="social-link-chip">
+              {{ getSocialIcon(link.platform) }} {{ link.platform }}
+            </a>
+          </div>
+        </section>
+
+        <!-- Resume -->
+        <section class="modal-section resume-section">
+          <h4 class="section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Resume
+          </h4>
+          <div class="resume-card" *ngIf="hasResume; else noResume">
+            <div class="resume-file-info">
+              <div class="resume-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+              </div>
+              <div>
+                <div class="resume-name">{{ profile.resume.fileName }}</div>
+                <div class="resume-meta" *ngIf="profile.resume.fileSize">
+                  {{ formatFileSize(profile.resume.fileSize) }} · Uploaded {{ profile.resume.uploadedAt | date:'mediumDate' }}
+                </div>
+              </div>
+            </div>
+            <div class="resume-actions">
+              <button class="btn-view-resume" (click)="viewResume()" [disabled]="isViewingResume">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                {{ isViewingResume ? 'Opening...' : 'View PDF' }}
+              </button>
+              <button class="btn-dl-resume" (click)="downloadResume()" [disabled]="isDownloadingResume">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                {{ isDownloadingResume ? 'Downloading...' : 'Download' }}
+              </button>
+            </div>
+          </div>
+          <ng-template #noResume>
+            <p class="no-resume-hint">No resume uploaded by this candidate yet.</p>
+          </ng-template>
+        </section>
+
+      </div><!-- end modal-body -->
+    </ng-container>
+  </div>
+</div>

@@ -1,22 +1,39 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 
-import { ConfirmModal } from './confirm-modal';
+import { ConfirmModalComponent } from './confirm-modal';
+import { ConfirmModalService } from '../../core/services/confirm-modal.service';
 
-describe('ConfirmModal', () => {
-  let component: ConfirmModal;
-  let fixture: ComponentFixture<ConfirmModal>;
+const mockModalService = {
+  isOpen: false,
+  config: { title: 'Test', message: 'Are you sure?', confirmText: 'Yes', cancelText: 'No', variant: 'primary' },
+  open: vi.fn().mockResolvedValue(true)
+};
+
+describe('ConfirmModalComponent', () => {
+  let component: ConfirmModalComponent;
+  let fixture: ComponentFixture<ConfirmModalComponent>;
 
   beforeEach(async () => {
+    vi.clearAllMocks();
+
     await TestBed.configureTestingModule({
-      imports: [ConfirmModal],
+      imports: [ConfirmModalComponent],
+      providers: [
+        { provide: ConfirmModalService, useValue: mockModalService }
+      ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ConfirmModal);
+    fixture = TestBed.createComponent(ConfirmModalComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the confirm modal component', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should inject ConfirmModalService as modalService', () => {
+    expect(component.modalService).toBeTruthy();
   });
 });

@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { JobResponse, JobService } from '../../../../core/services/job.service';
 import { ApplicationService } from '../../../../core/services/application.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-job-details',
@@ -17,6 +18,8 @@ export class JobDetailsComponent implements OnInit {
   isLoading = false;
   isApplying = false;
   alreadyApplied = false;
+  currentApplication: any = null;
+  fromApplications = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,6 +30,7 @@ export class JobDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     const jobId = Number(this.route.snapshot.paramMap.get('jobId'));
+    this.fromApplications = this.route.snapshot.queryParamMap.get('from') === 'applications';
 
     if (!jobId) {
       this.toastService.show('Invalid job details page', 'error');
@@ -55,10 +59,12 @@ export class JobDetailsComponent implements OnInit {
   loadMyApplications(jobId: number): void {
     this.applicationService.getMyApplications().subscribe({
       next: (applications) => {
-        this.alreadyApplied = (applications || []).some(app => app.jobId === jobId);
+        this.currentApplication = (applications || []).find(app => app.jobId === jobId);
+        this.alreadyApplied = !!this.currentApplication;
       },
       error: () => {
         this.alreadyApplied = false;
+        this.currentApplication = null;
       }
     });
   }
@@ -74,23 +80,80 @@ export class JobDetailsComponent implements OnInit {
       next: () => {
         this.isApplying = false;
         this.alreadyApplied = true;
+        this.loadMyApplications(this.job!.jobId); // Refresh to get status
         this.toastService.show('Applied successfully', 'success');
       },
       error: (error) => {
         this.isApplying = false;
-
-        const message =
-          error?.error?.message ||
-          (typeof error?.error === 'string' ? error.error : '') ||
-          'Already applied or failed to apply';
-
-        if (message.toLowerCase().includes('already')) {
-          this.alreadyApplied = true;
-        }
-
+        const message = error?.error?.message || 'Failed to apply';
         this.toastService.show(message, 'error');
       }
     });
+  }
+
+  respondToOffer(accept: boolean): void {
+    if (!this.currentApplication) return;
+
+    const primaryStatus = accept ? 'OFFER_ACCEPTED' : 'OFFER_REJECTED';
+    const fallbackStatus = accept ? 'ACCEPTED' : 'REJECTED';
+    const actionText = accept ? 'accept' : 'reject';
+
+    this.applicationService.updateStatus(this.currentApplication.id, primaryStatus).pipe(
+      catchError((error) => {
+        // Backward-compatible fallback for environments that still use legacy statuses.
+        return this.applicationService.updateStatus(this.currentApplication.id, fallbackStatus).pipe(
+          catchError(() => throwError(() => error))
+        );
+      })
+    ).subscribe({
+      next: () => {
+        this.toastService.show(`Offer ${actionText}ed successfully`, 'success');
+        this.currentApplication.status = primaryStatus;
+      },
+      error: (error) => {
+        console.error(`Error ${actionText}ing offer:`, error);
+        const errorMessage = error?.error?.message || `Failed to ${actionText} offer`;
+        this.toastService.show(errorMessage, 'error');
+      }
+    });
+  }
+
+  // ─── Pipeline Logic ────────────────────────────────────────────────────────
+
+  get applicationStatus(): string | null {
+    return this.currentApplication?.status ?? null;
+  }
+
+  // 0: Applied, 1: Shortlisted, 2: Offer Sent, 3: Final decision
+  get pipelineCurrentIndex(): number {
+    const s = this.applicationStatus;
+    if (!s) return 0;
+
+    if (s === 'APPLIED') return 0;
+    if (s === 'SHORTLISTED') return 1;
+    if (s === 'ACCEPTED') return 2;
+    if (s === 'OFFER_ACCEPTED') return 4; // Complete
+    if (s === 'OFFER_REJECTED') return 4; // Complete
+    if (s === 'REJECTED') return 1;
+
+    return 2;
+  }
+
+  get pipelineFinalDecisionTitle(): string {
+    const s = this.applicationStatus;
+    if (s === 'OFFER_ACCEPTED') return 'Offer Accepted';
+    if (s === 'OFFER_REJECTED') return 'Offer Rejected';
+    if (s === 'REJECTED') return 'Rejected';
+    return 'Document Verification';
+  }
+
+  get pipelineSteps(): Array<{ title: string }> {
+    return [
+      { title: 'Applied' },
+      { title: 'Shortlisted' },
+      { title: 'Offer Received' },
+      { title: this.pipelineFinalDecisionTitle }
+    ];
   }
 
   formatSalary(): string {

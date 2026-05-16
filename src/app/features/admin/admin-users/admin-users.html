@@ -1,0 +1,55 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">User Management</h1>
+      <p class="page-subtitle">Manage all registered candidates and recruiters</p>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab" [class.active]="filterRole === 'ALL'" (click)="setFilter('ALL')">All</button>
+      <button class="filter-tab" [class.active]="filterRole === 'CANDIDATE'" (click)="setFilter('CANDIDATE')">Candidates</button>
+      <button class="filter-tab" [class.active]="filterRole === 'RECRUITER'" (click)="setFilter('RECRUITER')">Recruiters</button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading users...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td class="muted">#{{ user.userId }}</td>
+          <td class="bold-cell">{{ user.email }}</td>
+          <td>
+            <span class="role-badge" [class.candidate]="user.role === 'CANDIDATE'" [class.recruiter]="user.role === 'RECRUITER'">
+              {{ user.role }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [class.active]="user.active" [class.suspended]="!user.active">
+              {{ user.active ? 'Active' : 'Suspended' }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button *ngIf="user.active" class="btn-danger-sm" (click)="suspendUser(user)">Suspend</button>
+            <button *ngIf="!user.active" class="btn-success-sm" (click)="activateUser(user)">Reactivate</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredUsers.length === 0">
+          <td colspan="5" class="empty-row">No users found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
