@@ -23,6 +23,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   let requestToSend = req;
 
+  // 
   if (accessToken && !isAuthApi) {
     requestToSend = req.clone({
       setHeaders: {
@@ -93,4 +94,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     })
   );
-};
+};

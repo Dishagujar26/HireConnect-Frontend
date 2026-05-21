@@ -94,7 +94,7 @@ describe('CandidateDashboard', () => {
     });
 
     it('should set recommendedJobs from API response', async () => {
-      const jobs = [{ jobId: 1, title: 'Angular Dev' }, { jobId: 2, title: 'TS Dev' }];
+      const jobs = [{ jobId: 1, title: 'Angular Dev', matchScore: 80 }, { jobId: 2, title: 'TS Dev', matchScore: 90 }];
       mockProfileService.getMyProfile.mockReturnValue(of({ skills: [{ name: 'Angular' }] }));
       mockJobService.getRecommendedJobs.mockReturnValue(of(jobs));
 

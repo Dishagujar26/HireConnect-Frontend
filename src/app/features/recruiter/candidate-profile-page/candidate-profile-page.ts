@@ -5,6 +5,7 @@ import { ProfileService } from '../../../core/services/profile.service';
 import { ApplicationService } from '../../../core/services/application.service';
 import { JobService, JobResponse } from '../../../core/services/job.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { ConfirmModalService } from '../../../core/services/confirm-modal.service';
 
 @Component({
   selector: 'app-candidate-profile-page',
@@ -30,7 +31,8 @@ export class CandidateProfilePageComponent implements OnInit {
     private profileService: ProfileService,
     private applicationService: ApplicationService,
     private jobService: JobService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private confirmModal: ConfirmModalService
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +79,32 @@ export class CandidateProfilePageComponent implements OnInit {
       },
       error: () => {
         this.application = null;
+      }
+    });
+  }
+
+  async updateStatus(status: string): Promise<void> {
+    if (!this.application) return;
+
+    const confirmed = await this.confirmModal.open({
+      title: 'Update Application Status',
+      message: `Are you sure you want to mark this application as ${status}?`,
+      confirmText: 'Confirm',
+      cancelText: 'Cancel',
+      variant: status === 'REJECTED' ? 'danger' : 'primary'
+    });
+
+    if (!confirmed) return;
+
+    const appId = this.application.applicationId || this.application.id;
+
+    this.applicationService.updateStatus(appId, status).subscribe({
+      next: () => {
+        this.application = { ...this.application, status: status };
+        this.toastService.show('Application status updated', 'success');
+      },
+      error: () => {
+        this.toastService.show('Failed to update application status', 'error');
       }
     });
   }

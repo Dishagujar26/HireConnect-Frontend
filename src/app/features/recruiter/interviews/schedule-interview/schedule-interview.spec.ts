@@ -8,7 +8,11 @@ import { ScheduleInterviewComponent } from './schedule-interview';
 import { InterviewService } from '../../../../core/services/interview.service';
 import { ToastService } from '../../../../core/services/toast.service';
 
-const mockInterviewService = { scheduleInterview: vi.fn() };
+const mockInterviewService = {
+  scheduleInterview: vi.fn(),
+  getInterviewDetails: vi.fn().mockReturnValue(of({})),
+  updateInterview: vi.fn().mockReturnValue(of({}))
+};
 const mockToastService = { show: vi.fn() };
 const mockRouter = { navigate: vi.fn() };
 
@@ -25,7 +29,16 @@ describe('ScheduleInterviewComponent', () => {
         provideRouter([]),
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => '10' } } }
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: (key: string) => {
+                  if (key === 'applicationId') return '10';
+                  return null;
+                }
+              }
+            }
+          }
         },
         { provide: Router, useValue: mockRouter },
         { provide: InterviewService, useValue: mockInterviewService },

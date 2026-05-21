@@ -34,6 +34,8 @@ describe('ProfileComponent', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     mockProfileService.getMyProfile.mockReturnValue(of(mockProfile));
+    mockProfileService.uploadResume.mockReturnValue(of('Resume uploaded successfully!'));
+    mockProfileService.parseResume.mockReturnValue(of({ extractedSkills: ['Angular'] }));
 
     await TestBed.configureTestingModule({
       imports: [ProfileComponent, FormsModule],
@@ -115,6 +117,7 @@ describe('ProfileComponent', () => {
     const event = { target: { files: [file] } } as any;
     component.onResumeFileSelected(event);
     expect(component.resumeUploadError).toBe('');
-    expect(component.selectedResumeFile).toEqual(file);
+    expect(component.selectedResumeFile).toBeNull();
+    expect(mockProfileService.uploadResume).toHaveBeenCalledWith(file);
   });
 });

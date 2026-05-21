@@ -47,7 +47,7 @@
         <tbody>
           <tr *ngFor="let tx of transactions">
             <td class="muted">#{{ tx.id }}</td>
-            <td class="email-cell">{{ tx.email }}</td>
+            <td class="bold-cell">{{ tx.email }}</td>
             <td><span class="type-badge">{{ tx.purpose }}</span></td>
             <td class="bold-cell">₹{{ tx.amount }}</td>
             <td>

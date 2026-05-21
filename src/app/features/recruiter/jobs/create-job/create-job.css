@@ -97,6 +97,12 @@
   letter-spacing: 0.05em;
 }
 
+.required-asterisk {
+  color: var(--error);
+  margin-left: 4px;
+  font-size: 14px;
+}
+
 .form-group input,
 .form-group textarea,
 .form-group select {

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -43,6 +44,7 @@ describe('RecruiterInterviewsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [RecruiterInterviewsComponent],
       providers: [
+        provideRouter([]),
         { provide: InterviewService, useValue: mockInterviewService },
         { provide: ToastService, useValue: mockToastService },
         { provide: ConfirmModalService, useValue: mockConfirmModal },

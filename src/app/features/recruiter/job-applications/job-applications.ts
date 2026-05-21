@@ -106,6 +106,7 @@ export class RecruiterJobApplicationsComponent implements OnInit {
     this.appService.updateStatus(app.applicationId, status).subscribe({
       next: () => {
         app.status = status;
+        this.applications = [...this.applications];
         this.toastService.show('Application status updated', 'success');
       },
       error: () => {
